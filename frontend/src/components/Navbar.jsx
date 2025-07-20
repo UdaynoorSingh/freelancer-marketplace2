@@ -64,6 +64,18 @@ const rightActions = {
     gap: '1.2rem',
 };
 
+const createBtn = {
+    background: '#1dbf73',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '8px',
+    padding: '0.5rem 1.2rem',
+    fontWeight: 600,
+    fontSize: '1rem',
+    cursor: 'pointer',
+    marginLeft: '1rem',
+};
+
 const avatar = {
     width: '32px',
     height: '32px',
@@ -175,6 +187,7 @@ const Navbar = () => {
                 <MdMailOutline size={22} color="#404145" style={{ cursor: 'pointer' }} title="Messages" />
                 <MdFavoriteBorder size={22} color="#404145" style={{ cursor: 'pointer' }} title="Favorites" />
                 <span style={{ fontWeight: 500, color: '#404145', cursor: 'pointer' }}>Orders</span>
+                <button style={createBtn} onClick={() => navigate('/create-gig')}>Create Gig</button>
                 <div
                     style={avatar}
                     ref={avatarRef}
