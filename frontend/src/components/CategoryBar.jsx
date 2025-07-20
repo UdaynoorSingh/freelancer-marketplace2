@@ -1,6 +1,7 @@
 import React from 'react';
 import { MdWhatshot } from 'react-icons/md';
 import { FiEdit } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 const barStyle = {
     display: 'flex',
@@ -47,18 +48,32 @@ const categories = [
     { label: 'Business', icon: null },
 ];
 
-const CategoryBar = () => (
-    <div style={barStyle}>
-        {categories.map(cat => (
-            <span key={cat.label} style={catStyle}>
-                {cat.icon ? <span style={{ marginRight: 4 }}>{cat.icon}</span> : null}
-                {cat.label}
-            </span>
-        ))}
-        <button style={postBtn}>
-            <FiEdit size={18} /> Post a brief
-        </button>
-    </div>
-);
+const CategoryBar = () => {
+    const navigate = useNavigate();
+    const handleCategoryClick = (cat) => {
+        if (cat.label === 'Trending') {
+            navigate('/search?category=Trending');
+        } else {
+            navigate(`/search?category=${encodeURIComponent(cat.label)}`);
+        }
+    };
+    return (
+        <div style={barStyle}>
+            {categories.map(cat => (
+                <span
+                    key={cat.label}
+                    style={catStyle}
+                    onClick={() => handleCategoryClick(cat)}
+                >
+                    {cat.icon ? <span style={{ marginRight: 4 }}>{cat.icon}</span> : null}
+                    {cat.label}
+                </span>
+            ))}
+            <button style={postBtn}>
+                <FiEdit size={18} /> Post a brief
+            </button>
+        </div>
+    );
+};
 
 export default CategoryBar; 

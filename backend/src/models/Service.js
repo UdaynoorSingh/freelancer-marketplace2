@@ -6,6 +6,7 @@ const serviceSchema = new mongoose.Schema({
     tags: [{ type: String }],
     price: { type: Number, required: true },
     seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    category: { type: String, required: true },
     createdAt: { type: Date, default: Date.now }
 });
 
