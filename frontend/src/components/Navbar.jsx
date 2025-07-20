@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MdSearch, MdNotificationsNone, MdMailOutline, MdFavoriteBorder } from 'react-icons/md';
-import { FiPackage } from 'react-icons/fi';
+import { useAuth } from '../contexts/AuthContext';
 
 const navStyle = {
     display: 'flex',
@@ -76,6 +76,7 @@ const avatar = {
     color: '#fff',
     fontSize: '1.1rem',
     position: 'relative',
+    cursor: 'pointer',
 };
 const onlineDot = {
     position: 'absolute',
@@ -88,9 +89,42 @@ const onlineDot = {
     border: '2px solid #fff',
 };
 
+const dropdownMenu = {
+    position: 'absolute',
+    top: '120%',
+    right: 0,
+    background: '#fff',
+    border: '1px solid #e4e5e7',
+    borderRadius: '10px',
+    boxShadow: '0 4px 16px rgba(0,0,0,0.10)',
+    minWidth: '220px',
+    zIndex: 999,
+    padding: '0.5rem 0',
+};
+const dropdownItem = {
+    padding: '0.7rem 1.5rem',
+    cursor: 'pointer',
+    color: '#404145',
+    fontWeight: 500,
+    background: 'none',
+    border: 'none',
+    width: '100%',
+    textAlign: 'left',
+    outline: 'none',
+};
+const dropdownItemHover = {
+    ...dropdownItem,
+    background: '#f5f5f5',
+};
+
 const Navbar = () => {
     const [search, setSearch] = useState('');
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [hovered, setHovered] = useState(null);
+    const avatarRef = useRef();
+    const dropdownRef = useRef();
     const navigate = useNavigate();
+    const { logout, user } = useAuth();
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -98,6 +132,29 @@ const Navbar = () => {
             navigate(`/search?query=${encodeURIComponent(search.trim())}`);
             setSearch('');
         }
+    };
+
+    // Close dropdown on outside click
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (
+                dropdownOpen &&
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target) &&
+                avatarRef.current &&
+                !avatarRef.current.contains(event.target)
+            ) {
+                setDropdownOpen(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [dropdownOpen]);
+
+    const handleLogout = () => {
+        setDropdownOpen(false);
+        logout();
+        navigate('/login');
     };
 
     return (
@@ -118,7 +175,37 @@ const Navbar = () => {
                 <MdMailOutline size={22} color="#404145" style={{ cursor: 'pointer' }} title="Messages" />
                 <MdFavoriteBorder size={22} color="#404145" style={{ cursor: 'pointer' }} title="Favorites" />
                 <span style={{ fontWeight: 500, color: '#404145', cursor: 'pointer' }}>Orders</span>
-                <div style={avatar}>A<div style={onlineDot}></div></div>
+                <div
+                    style={avatar}
+                    ref={avatarRef}
+                    onClick={() => setDropdownOpen((open) => !open)}
+                >
+                    {user && user.username ? user.username[0].toUpperCase() : 'A'}
+                    <div style={onlineDot}></div>
+                    {dropdownOpen && (
+                        <div style={dropdownMenu} ref={dropdownRef}>
+                            <button
+                                style={hovered === 'profile' ? dropdownItemHover : dropdownItem}
+                                onMouseEnter={() => setHovered('profile')}
+                                onMouseLeave={() => setHovered(null)}
+                                onClick={() => { setDropdownOpen(false); navigate('/profile'); }}
+                            >Profile</button>
+                            <button
+                                style={hovered === 'settings' ? dropdownItemHover : dropdownItem}
+                                onMouseEnter={() => setHovered('settings')}
+                                onMouseLeave={() => setHovered(null)}
+                                onClick={() => { setDropdownOpen(false); navigate('/settings'); }}
+                            >Account settings</button>
+                            <hr style={{ margin: '0.5rem 0', border: 'none', borderTop: '1px solid #eee' }} />
+                            <button
+                                style={hovered === 'logout' ? dropdownItemHover : dropdownItem}
+                                onMouseEnter={() => setHovered('logout')}
+                                onMouseLeave={() => setHovered(null)}
+                                onClick={handleLogout}
+                            >Logout</button>
+                        </div>
+                    )}
+                </div>
             </div>
         </nav>
     );

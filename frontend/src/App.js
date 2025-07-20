@@ -90,16 +90,33 @@ const PublicRoute = ({ children }) => {
     return children;
 };
 
+function ProtectedLayout({ children }) {
+    return (
+        <>
+            <Navbar />
+            <CategoryBar />
+            {children}
+        </>
+    );
+}
+
 function App() {
     return (
         <AuthProvider>
             <Router>
-                <Navbar />
-                <CategoryBar />
                 <Routes>
                     <Route path="/" element={
                         <ProtectedRoute>
-                            <Home />
+                            <ProtectedLayout>
+                                <Home />
+                            </ProtectedLayout>
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/search" element={
+                        <ProtectedRoute>
+                            <ProtectedLayout>
+                                <SearchResults />
+                            </ProtectedLayout>
                         </ProtectedRoute>
                     } />
                     <Route path="/register" element={
@@ -113,7 +130,6 @@ function App() {
                         </PublicRoute>
                     } />
                     <Route path="/verify-email" element={<VerifyEmail />} />
-                    <Route path="/search" element={<SearchResults />} />
                 </Routes>
             </Router>
         </AuthProvider>
