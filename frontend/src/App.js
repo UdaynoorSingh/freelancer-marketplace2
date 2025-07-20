@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } f
 import Register from './pages/Register';
 import Login from './pages/Login';
 import VerifyEmail from './pages/VerifyEmail';
+import Navbar from './components/Navbar';
+import CategoryBar from './components/CategoryBar';
+import SearchResults from './pages/SearchResults';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -91,6 +94,8 @@ function App() {
     return (
         <AuthProvider>
             <Router>
+                <Navbar />
+                <CategoryBar />
                 <Routes>
                     <Route path="/" element={
                         <ProtectedRoute>
@@ -108,6 +113,7 @@ function App() {
                         </PublicRoute>
                     } />
                     <Route path="/verify-email" element={<VerifyEmail />} />
+                    <Route path="/search" element={<SearchResults />} />
                 </Routes>
             </Router>
         </AuthProvider>
