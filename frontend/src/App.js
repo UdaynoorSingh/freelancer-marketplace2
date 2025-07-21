@@ -11,6 +11,8 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useEffect, useState } from 'react';
 import { MdStar, MdFavoriteBorder } from 'react-icons/md';
+import GigDetails from './pages/GigDetails'; 
+
 
 const homeContainer = {
     display: 'flex',
@@ -135,6 +137,7 @@ const favBtn = {
 };
 
 const Home = () => {
+    const navigate = useNavigate();
     const [gigs, setGigs] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -196,7 +199,15 @@ const Home = () => {
                                     <span style={{ color: '#888', fontSize: '0.95rem', marginLeft: 4 }}>({reviewCount})</span>
                                     <span style={{ marginLeft: 'auto', ...fromStyle }}>From</span>
                                     <span style={priceStyle}>₹{service.price}</span>
+
                                 </div>
+                                <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
+                                 <button
+                                   style={{ background: '#1dbf73', color: '#fff', padding: '0.6rem 1.2rem', borderRadius: 8, border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '0.95rem' }}
+                                    onClick={() => navigate(`/gig/${service._id}`)}>
+                                        View
+                                  </button>
+                                  </div>
                             </div>
                         </div>
                     );
@@ -206,7 +217,7 @@ const Home = () => {
     );
 };
 
-// PublicRoute: Only accessible if NOT logged in
+
 const PublicRoute = ({ children }) => {
     const { user, token } = useAuth();
     if (user && token) {
@@ -262,6 +273,13 @@ function App() {
                         </PublicRoute>
                     } />
                     <Route path="/verify-email" element={<VerifyEmail />} />
+                    <Route path="/gig/:id" element={
+                        <ProtectedRoute>
+                            <ProtectedLayout>
+                                <GigDetails />
+                            </ProtectedLayout>
+                        </ProtectedRoute>
+                    } />
                 </Routes>
             </Router>
         </AuthProvider>

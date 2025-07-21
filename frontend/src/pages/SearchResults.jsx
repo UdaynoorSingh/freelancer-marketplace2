@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { MdStar, MdFavoriteBorder } from 'react-icons/md';
 
 function useQuery() {
@@ -78,6 +78,23 @@ const favBtn = {
   cursor: 'pointer',
   zIndex: 2,
 };
+const btnRow = {
+  display: 'flex',
+  gap: '0.8rem',
+  marginTop: '1rem',
+};
+const viewBtn = {
+  background: '#1dbf73',
+  color: '#fff',
+  padding: '0.6rem 1.2rem',
+  borderRadius: '8px',
+  border: 'none',
+  cursor: 'pointer',
+  fontWeight: 600,
+  fontSize: '0.95rem',
+  flex: 1,
+  textAlign: 'center',
+};
 
 const SearchResults = () => {
   const query = useQuery();
@@ -86,6 +103,7 @@ const SearchResults = () => {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!search && !category) return;
@@ -126,11 +144,12 @@ const SearchResults = () => {
           const avgRating = reviewCount > 0
             ? (service.reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount).toFixed(1)
             : (service.rating || 4.9);
+          const images = service.images || [];
           return (
             <div key={service._id} style={cardStyle}>
               <button style={favBtn}><MdFavoriteBorder size={20} color="#404145" /></button>
               <img
-                src={service.image ? `${process.env.REACT_APP_SERVER_URL}/uploads/${service.image}` : 'https://via.placeholder.com/320x180?text=No+Image'}
+                src={images.length > 0 ? `${process.env.REACT_APP_SERVER_URL}/uploads/${images[0]}` : 'https://via.placeholder.com/320x180?text=No+Image'}
                 alt={service.title}
                 style={imageStyle}
               />

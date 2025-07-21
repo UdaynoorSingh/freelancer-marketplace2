@@ -19,6 +19,9 @@ const upload = multer({ storage });
 // Search services
 router.get('/search', serviceController.searchServices);
 
+// Get a single service by ID
+router.get('/:id', serviceController.getService);
+
 // Create a new service (gig) with image upload
 router.post('/', upload.single('image'), serviceController.createService);
 
