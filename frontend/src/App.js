@@ -16,6 +16,7 @@ import GigDetails from './pages/GigDetails';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Orders from './pages/Orders';
+import Chat from './pages/Chat';
 
 
 const homeContainer = {
@@ -310,6 +311,7 @@ function App() {
                         </ProtectedRoute>
                     } />
                     <Route path="/orders" element={<ProtectedRoute><ProtectedLayout><Orders /></ProtectedLayout></ProtectedRoute>} />
+                    <Route path="/chat/:userId" element={<ProtectedRoute><ProtectedLayout><Chat /></ProtectedLayout></ProtectedRoute>} />
                 </Routes>
             </Router>
         </AuthProvider>

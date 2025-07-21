@@ -18,6 +18,8 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/services', require('./routes/services'));
 const ordersRouter = require('./routes/orders');
 app.use('/api/orders', ordersRouter);
+const messagesRouter = require('./routes/messages');
+app.use('/api/messages', messagesRouter);
 
 // Global error handler
 app.use((err, req, res, next) => {

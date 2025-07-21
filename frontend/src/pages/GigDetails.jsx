@@ -286,6 +286,24 @@ const GigDetails = () => {
             >
               Purchase
             </button>
+            <button
+              style={{
+                background: '#fff',
+                color: '#1dbf73',
+                border: '2px solid #1dbf73',
+                borderRadius: 8,
+                padding: '0.9rem 2.2rem',
+                fontWeight: 700,
+                fontSize: '1.1rem',
+                margin: '0.5rem 0 0.5rem 0',
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                transition: 'background 0.2s',
+              }}
+              onClick={() => navigate(`/chat/${gig.seller?._id}`)}
+            >
+              Chat
+            </button>
             {purchaseMsg && <div style={{ color: purchaseMsg.includes('success') ? '#1dbf73' : 'red', marginTop: 8 }}>{purchaseMsg}</div>}
           </>
         )}

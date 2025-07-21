@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MdSearch, MdNotificationsNone, MdMailOutline, MdFavoriteBorder } from 'react-icons/md';
 import { useAuth } from '../contexts/AuthContext';
+import { io } from 'socket.io-client';
 
 const navStyle = {
     display: 'flex',
@@ -129,6 +130,28 @@ const dropdownItemHover = {
     background: '#f5f5f5',
 };
 
+const notificationDot = {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    background: '#e53e3e',
+    color: '#fff',
+    borderRadius: '50%',
+    width: 16,
+    height: 16,
+    fontSize: '0.85rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: 700,
+    zIndex: 2,
+};
+
+const socket = io(process.env.REACT_APP_SERVER_URL, {
+    transports: ['websocket'],
+    withCredentials: true,
+});
+
 const Navbar = () => {
     const [search, setSearch] = useState('');
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -137,6 +160,8 @@ const Navbar = () => {
     const dropdownRef = useRef();
     const navigate = useNavigate();
     const { logout, user } = useAuth();
+    const [notifications, setNotifications] = useState([]);
+    const [notifOpen, setNotifOpen] = useState(false);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -163,10 +188,36 @@ const Navbar = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [dropdownOpen]);
 
+    useEffect(() => {
+        if (!user) return;
+        socket.emit('join', user.id);
+        socket.on('chat:receive', (msg) => {
+            // Only notify if not already chatting with sender
+            if (window.location.pathname !== `/chat/${msg.sender}`) {
+                setNotifications((prev) => [
+                    { sender: msg.sender, content: msg.content, timestamp: msg.timestamp },
+                    ...prev,
+                ]);
+            }
+        });
+        return () => {
+            socket.off('chat:receive');
+        };
+    }, [user]);
+
     const handleLogout = () => {
         setDropdownOpen(false);
         logout();
         navigate('/login');
+    };
+
+    const handleNotifClick = () => {
+        setNotifOpen((open) => !open);
+    };
+    const handleNotifSelect = (sender) => {
+        setNotifOpen(false);
+        setNotifications((prev) => prev.filter((n) => n.sender !== sender));
+        navigate(`/chat/${sender}`);
     };
 
     return (
@@ -183,7 +234,22 @@ const Navbar = () => {
                 <button type="submit" style={searchBtn}><MdSearch size={22} /></button>
             </form>
             <div style={rightActions}>
-                <MdNotificationsNone size={22} color="#404145" style={{ cursor: 'pointer' }} title="Notifications" />
+                <div style={{ position: 'relative' }}>
+                    <MdNotificationsNone size={22} color="#404145" style={{ cursor: 'pointer' }} title="Notifications" onClick={handleNotifClick} />
+                    {notifications.length > 0 && (
+                        <div style={notificationDot}>{notifications.length}</div>
+                    )}
+                    {notifOpen && notifications.length > 0 && (
+                        <div style={{ position: 'absolute', top: 28, right: 0, background: '#fff', border: '1px solid #eee', borderRadius: 10, boxShadow: '0 4px 16px rgba(0,0,0,0.10)', minWidth: 260, zIndex: 999 }}>
+                            {notifications.map((n, i) => (
+                                <div key={i} style={{ padding: '0.8rem 1.2rem', borderBottom: '1px solid #f5f5f5', cursor: 'pointer', color: '#222' }} onClick={() => handleNotifSelect(n.sender)}>
+                                    <b>New message</b>: {n.content.length > 32 ? n.content.slice(0, 32) + '...' : n.content}
+                                    <div style={{ color: '#888', fontSize: '0.92rem', marginTop: 2 }}>{new Date(n.timestamp).toLocaleTimeString()}</div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
                 <MdMailOutline size={22} color="#404145" style={{ cursor: 'pointer' }} title="Messages" />
                 <MdFavoriteBorder size={22} color="#404145" style={{ cursor: 'pointer' }} title="Favorites" />
                 <span style={{ fontWeight: 500, color: '#404145', cursor: 'pointer' }} onClick={() => navigate('/orders')}>Orders</span>
