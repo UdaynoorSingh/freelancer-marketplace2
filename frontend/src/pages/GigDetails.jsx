@@ -5,126 +5,126 @@ import { useAuth } from '../contexts/AuthContext';
 import { deleteService, getService } from '../services/serviceApi';
 
 const cardStyle = {
-    background: '#fff',
-    borderRadius: '12px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-    padding: 0,
-    maxWidth: 500,
-    margin: '2rem auto',
-    display: 'flex',
-    flexDirection: 'column',
-    overflow: 'hidden',
-    position: 'relative',
+  background: '#fff',
+  borderRadius: '12px',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+  padding: 0,
+  maxWidth: 500,
+  margin: '2rem auto',
+  display: 'flex',
+  flexDirection: 'column',
+  overflow: 'hidden',
+  position: 'relative',
 };
 const imageStyle = {
-    width: '100%',
-    height: 260,
-    objectFit: 'cover',
-    borderTopLeftRadius: '12px',
-    borderTopRightRadius: '12px',
-    background: '#f5f5f5',
+  width: '100%',
+  height: 260,
+  objectFit: 'cover',
+  borderTopLeftRadius: '12px',
+  borderTopRightRadius: '12px',
+  background: '#f5f5f5',
 };
 const carouselBtn = {
-    position: 'absolute',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    background: 'rgba(255,255,255,0.8)',
-    border: 'none',
-    borderRadius: '50%',
-    width: 32,
-    height: 32,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    zIndex: 3,
-    boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+  position: 'absolute',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  background: 'rgba(255,255,255,0.8)',
+  border: 'none',
+  borderRadius: '50%',
+  width: 32,
+  height: 32,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  zIndex: 3,
+  boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
 };
 const sellerRow = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.7rem',
-    margin: '1rem 0 0.5rem 0',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.7rem',
+  margin: '1rem 0 0.5rem 0',
 };
 const avatar = {
-    width: 32,
-    height: 32,
-    borderRadius: '50%',
-    background: '#f7931e',
-    color: '#fff',
-    fontWeight: 700,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '1.1rem',
+  width: 32,
+  height: 32,
+  borderRadius: '50%',
+  background: '#f7931e',
+  color: '#fff',
+  fontWeight: 700,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: '1.1rem',
 };
 const btnRow = {
-    display: 'flex',
-    gap: '1rem',
-    marginTop: '2rem',
-    justifyContent: 'flex-end',
+  display: 'flex',
+  gap: '1rem',
+  marginTop: '2rem',
+  justifyContent: 'flex-end',
 };
 const actionBtn = {
-    padding: '0.5rem 1.2rem',
-    borderRadius: '8px',
-    border: 'none',
-    fontWeight: 600,
-    fontSize: '1rem',
-    cursor: 'pointer',
+  padding: '0.5rem 1.2rem',
+  borderRadius: '8px',
+  border: 'none',
+  fontWeight: 600,
+  fontSize: '1rem',
+  cursor: 'pointer',
 };
 const editBtn = {
-    ...actionBtn,
-    background: '#1dbf73',
-    color: '#fff',
+  ...actionBtn,
+  background: '#1dbf73',
+  color: '#fff',
 };
 const deleteBtn = {
-    ...actionBtn,
-    background: '#e53e3e',
-    color: '#fff',
+  ...actionBtn,
+  background: '#e53e3e',
+  color: '#fff',
 };
 const modalOverlay = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100vw',
-    height: '100vh',
-    background: 'rgba(0,0,0,0.2)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 9999,
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  width: '100vw',
+  height: '100vh',
+  background: 'rgba(0,0,0,0.2)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 9999,
 };
 const modalBox = {
-    background: '#fff',
-    borderRadius: 12,
-    padding: '2rem',
-    boxShadow: '0 2px 16px rgba(0,0,0,0.15)',
-    minWidth: 320,
-    textAlign: 'center',
+  background: '#fff',
+  borderRadius: 12,
+  padding: '2rem',
+  boxShadow: '0 2px 16px rgba(0,0,0,0.15)',
+  minWidth: 320,
+  textAlign: 'center',
 };
 const modalBtnRow = {
-    display: 'flex',
-    gap: '1rem',
-    marginTop: '1.5rem',
-    justifyContent: 'center',
+  display: 'flex',
+  gap: '1rem',
+  marginTop: '1.5rem',
+  justifyContent: 'center',
 };
 const modalBtn = {
-    padding: '0.5rem 1.2rem',
-    borderRadius: '8px',
-    border: 'none',
-    fontWeight: 600,
-    fontSize: '1rem',
-    cursor: 'pointer',
+  padding: '0.5rem 1.2rem',
+  borderRadius: '8px',
+  border: 'none',
+  fontWeight: 600,
+  fontSize: '1rem',
+  cursor: 'pointer',
 };
 const modalDeleteBtn = {
-    ...modalBtn,
-    background: '#e53e3e',
-    color: '#fff',
+  ...modalBtn,
+  background: '#e53e3e',
+  color: '#fff',
 };
 const modalCancelBtn = {
-    ...modalBtn,
-    background: '#eee',
-    color: '#222',
+  ...modalBtn,
+  background: '#eee',
+  color: '#222',
 };
 
 const GigDetails = () => {
@@ -137,6 +137,7 @@ const GigDetails = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [purchaseMsg, setPurchaseMsg] = useState('');
 
   useEffect(() => {
     const fetchGig = async () => {
@@ -180,6 +181,28 @@ const GigDetails = () => {
     }
   };
 
+  const handlePurchase = async () => {
+    setPurchaseMsg('');
+    try {
+      const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ gigId: gig._id }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setPurchaseMsg('Order placed successfully!');
+      } else {
+        setPurchaseMsg(data.message || 'Failed to place order.');
+      }
+    } catch (err) {
+      setPurchaseMsg('Failed to place order.');
+    }
+  };
+
   if (loading) return <div style={{ padding: '2rem' }}>Loading...</div>;
   if (error) return <div style={{ padding: '2rem', color: 'red' }}>{error}</div>;
   if (!gig) return null;
@@ -215,6 +238,11 @@ const GigDetails = () => {
         <div style={sellerRow}>
           <div style={avatar}>{gig.seller?.username?.[0]?.toUpperCase() || 'U'}</div>
           <span style={{ color: '#222', fontWeight: 600 }}>{gig.seller?.username || 'Unknown'}</span>
+          {gig.seller?.email && (
+            <span style={{ color: '#888', fontSize: '0.97rem', marginLeft: 8 }}>
+              {gig.seller.email}
+            </span>
+          )}
           <span style={{ color: '#888', fontSize: '0.95rem', marginLeft: 'auto' }}>Level 1 ◆◆</span>
         </div>
 
@@ -236,6 +264,31 @@ const GigDetails = () => {
           <span style={{ marginLeft: 'auto', color: '#555', fontSize: '0.95rem', marginRight: 4 }}>From</span>
           <span style={{ color: '#222', fontWeight: 700, fontSize: '1.1rem' }}>₹{gig.price}</span>
         </div>
+
+        {/* Purchase Button (not for owner) */}
+        {!isOwner && (
+          <>
+            <button
+              style={{
+                background: '#1dbf73',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 8,
+                padding: '0.9rem 2.2rem',
+                fontWeight: 700,
+                fontSize: '1.1rem',
+                margin: '1.5rem 0 0.5rem 0',
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                transition: 'background 0.2s',
+              }}
+              onClick={handlePurchase}
+            >
+              Purchase
+            </button>
+            {purchaseMsg && <div style={{ color: purchaseMsg.includes('success') ? '#1dbf73' : 'red', marginTop: 8 }}>{purchaseMsg}</div>}
+          </>
+        )}
 
         {isOwner && (
           <div style={btnRow}>

@@ -16,6 +16,8 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/services', require('./routes/services'));
+const ordersRouter = require('./routes/orders');
+app.use('/api/orders', ordersRouter);
 
 // Global error handler
 app.use((err, req, res, next) => {

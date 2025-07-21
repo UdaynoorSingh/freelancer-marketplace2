@@ -15,6 +15,7 @@ import { MdStar, MdFavoriteBorder } from 'react-icons/md';
 import GigDetails from './pages/GigDetails';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
+import Orders from './pages/Orders';
 
 
 const homeContainer = {
@@ -308,6 +309,7 @@ function App() {
                             </ProtectedLayout>
                         </ProtectedRoute>
                     } />
+                    <Route path="/orders" element={<ProtectedRoute><ProtectedLayout><Orders /></ProtectedLayout></ProtectedRoute>} />
                 </Routes>
             </Router>
         </AuthProvider>

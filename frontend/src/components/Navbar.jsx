@@ -186,7 +186,7 @@ const Navbar = () => {
                 <MdNotificationsNone size={22} color="#404145" style={{ cursor: 'pointer' }} title="Notifications" />
                 <MdMailOutline size={22} color="#404145" style={{ cursor: 'pointer' }} title="Messages" />
                 <MdFavoriteBorder size={22} color="#404145" style={{ cursor: 'pointer' }} title="Favorites" />
-                <span style={{ fontWeight: 500, color: '#404145', cursor: 'pointer' }}>Orders</span>
+                <span style={{ fontWeight: 500, color: '#404145', cursor: 'pointer' }} onClick={() => navigate('/orders')}>Orders</span>
                 <button style={createBtn} onClick={() => navigate('/create-gig')}>Create Gig</button>
                 <div
                     style={avatar}
