@@ -23,6 +23,12 @@ router.get('/search', serviceController.searchServices);
 router.get('/:id', serviceController.getService);
 
 // Create a new service (gig) with image upload
-router.post('/', upload.single('image'), serviceController.createService);
+router.post('/', upload.array('images', 5), serviceController.createService);
+
+// Update a service (gig) by ID
+router.put('/:id', upload.array('images', 5), serviceController.updateService);
+
+// Delete a service (gig) by ID
+router.delete('/:id', serviceController.deleteService);
 
 module.exports = router; 

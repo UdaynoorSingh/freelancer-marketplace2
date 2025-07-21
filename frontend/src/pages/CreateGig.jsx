@@ -50,7 +50,7 @@ const CreateGig = () => {
     tags: '',
     price: '',
     category: categories[0],
-    image: null,
+    images: [],
   });
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
@@ -58,8 +58,8 @@ const CreateGig = () => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === 'image') {
-      setForm({ ...form, image: files[0] });
+    if (name === 'images') {
+      setForm({ ...form, images: Array.from(files) });
     } else {
       setForm({ ...form, [name]: value });
     }
@@ -77,7 +77,7 @@ const CreateGig = () => {
     formData.append('price', form.price);
     formData.append('category', form.category);
     formData.append('seller', user?.id);
-    if (form.image) formData.append('image', form.image);
+    form.images.forEach(img => formData.append('images', img));
     try {
       const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/services`, {
         method: 'POST',
@@ -86,7 +86,7 @@ const CreateGig = () => {
       const data = await res.json();
       if (res.ok) {
         setSuccess('Gig created successfully!');
-        setForm({ title: '', description: '', tags: '', price: '', category: categories[0], image: null });
+        setForm({ title: '', description: '', tags: '', price: '', category: categories[0], images: [] });
       } else {
         setError(data.message || 'Failed to create gig.');
       }
@@ -113,8 +113,15 @@ const CreateGig = () => {
       <select style={inputStyle} name="category" value={form.category} onChange={handleChange}>
         {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
       </select>
-      <label style={labelStyle}>Image</label>
-      <input style={inputStyle} name="image" type="file" accept="image/*" onChange={handleChange} />
+      <label style={labelStyle}>Images (up to 5)</label>
+      <input
+        style={inputStyle}
+        name="images"
+        type="file"
+        accept="image/*"
+        onChange={handleChange}
+        multiple
+      />
       <button style={btnStyle} type="submit" disabled={loading}>{loading ? 'Creating...' : 'Create Gig'}</button>
     </form>
   );

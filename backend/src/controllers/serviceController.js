@@ -46,7 +46,7 @@ exports.getService = async (req, res) => {
     }
 };
 
-// ✅ Create a new service (gig) with optional image
+// ✅ Create a new service (gig) with multiple images
 exports.createService = async (req, res) => {
     try {
         const {
@@ -64,7 +64,8 @@ exports.createService = async (req, res) => {
                 ? tags.split(',').map(t => t.trim())
                 : [];
 
-        const image = req.file ? req.file.filename : null;
+        // Handle multiple images
+        const images = req.files ? req.files.map(f => f.filename) : [];
 
         const service = new Service({
             title,
@@ -73,12 +74,62 @@ exports.createService = async (req, res) => {
             price,
             category,
             seller,
-            image
+            images
         });
 
         await service.save();
         res.status(201).json(service);
     } catch (err) {
         res.status(500).json({ message: 'Error creating service', error: err.message });
+    }
+};
+
+// ✅ Update a service (gig) by ID
+exports.updateService = async (req, res) => {
+    try {
+        const { title, description, tags, price, category } = req.body;
+        const tagsArray = Array.isArray(tags)
+            ? tags
+            : typeof tags === 'string'
+                ? tags.split(',').map(t => t.trim())
+                : [];
+        const update = {
+            title,
+            description,
+            tags: tagsArray,
+            price,
+            category,
+        };
+        if (req.files && req.files.length > 0) {
+            update.images = req.files.map(f => f.filename);
+        }
+        const service = await Service.findByIdAndUpdate(req.params.id, update, { new: true });
+        if (!service) {
+            return res.status(404).json({ message: 'Service not found' });
+        }
+        res.json(service);
+    } catch (err) {
+        res.status(500).json({ message: 'Error updating service', error: err.message });
+    }
+};
+
+// ✅ Delete a service (gig) by ID
+exports.deleteService = async (req, res) => {
+    try {
+        const service = await Service.findById(req.params.id);
+        if (!service) {
+            return res.status(404).json({ message: 'Service not found' });
+        }
+        // Optionally, delete images from disk
+        if (service.images && service.images.length > 0) {
+            service.images.forEach(img => {
+                const imgPath = path.join(__dirname, '../../uploads', img);
+                if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
+            });
+        }
+        await service.deleteOne();
+        res.json({ message: 'Service deleted' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error deleting service', error: err.message });
     }
 };

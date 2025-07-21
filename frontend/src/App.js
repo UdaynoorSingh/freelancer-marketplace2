@@ -7,11 +7,12 @@ import Navbar from './components/Navbar';
 import CategoryBar from './components/CategoryBar';
 import SearchResults from './pages/SearchResults';
 import CreateGig from './pages/CreateGig';
+import EditGig from './pages/EditGig';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useEffect, useState } from 'react';
 import { MdStar, MdFavoriteBorder } from 'react-icons/md';
-import GigDetails from './pages/GigDetails'; 
+import GigDetails from './pages/GigDetails';
 
 
 const homeContainer = {
@@ -176,7 +177,11 @@ const Home = () => {
                         <div key={service._id} style={cardStyle}>
                             <button style={favBtn}><MdFavoriteBorder size={20} color="#404145" /></button>
                             <img
-                                src={service.image ? `${process.env.REACT_APP_SERVER_URL}/uploads/${service.image}` : 'https://via.placeholder.com/320x180?text=No+Image'}
+                                src={
+                                    service.images && service.images.length > 0
+                                        ? `${process.env.REACT_APP_SERVER_URL}/uploads/${service.images[0]}`
+                                        : 'https://via.placeholder.com/320x180?text=No+Image'
+                                }
                                 alt={service.title}
                                 style={imageStyle}
                             />
@@ -202,12 +207,12 @@ const Home = () => {
 
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
-                                 <button
-                                   style={{ background: '#1dbf73', color: '#fff', padding: '0.6rem 1.2rem', borderRadius: 8, border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '0.95rem' }}
-                                    onClick={() => navigate(`/gig/${service._id}`)}>
+                                    <button
+                                        style={{ background: '#1dbf73', color: '#fff', padding: '0.6rem 1.2rem', borderRadius: 8, border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '0.95rem' }}
+                                        onClick={() => navigate(`/gig/${service._id}`)}>
                                         View
-                                  </button>
-                                  </div>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     );
@@ -277,6 +282,13 @@ function App() {
                         <ProtectedRoute>
                             <ProtectedLayout>
                                 <GigDetails />
+                            </ProtectedLayout>
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/edit-gig/:id" element={
+                        <ProtectedRoute>
+                            <ProtectedLayout>
+                                <EditGig />
                             </ProtectedLayout>
                         </ProtectedRoute>
                     } />

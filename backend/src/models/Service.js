@@ -14,7 +14,7 @@ const serviceSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     category: { type: String, required: true },
-    image: { type: String },
+    images: [{ type: String }], // Changed from image to images array
     rating: { type: Number, default: 0 },
     reviews: [reviewSchema],
     createdAt: { type: Date, default: Date.now }
