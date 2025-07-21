@@ -300,7 +300,7 @@ const GigDetails = () => {
                 boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
                 transition: 'background 0.2s',
               }}
-              onClick={() => navigate(`/chat/${gig.seller?._id}`)}
+              onClick={() => navigate(`/chat/${gig.seller?._id}`, { state: { gigId: gig._id, gigTitle: gig.title } })}
             >
               Chat
             </button>

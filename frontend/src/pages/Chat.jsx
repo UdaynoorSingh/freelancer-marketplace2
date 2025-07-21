@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
 const chatBox = {
@@ -62,6 +62,9 @@ const socket = io(process.env.REACT_APP_SERVER_URL, {
 const Chat = () => {
     const { user, token } = useAuth();
     const { userId } = useParams(); // chatting with userId
+    const location = useLocation();
+    const gigIdFromState = location.state?.gigId;
+    const gigTitleFromState = location.state?.gigTitle;
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [otherUser, setOtherUser] = useState(null);
@@ -124,21 +127,33 @@ const Chat = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    // Track if gig banner should be shown
+    const gigBanner = (() => {
+        // If gigIdFromState, show banner
+        if (gigIdFromState && gigTitleFromState) return { gigId: gigIdFromState, gigTitle: gigTitleFromState };
+        // Else, check if any message has gig
+        const msgWithGig = messages.find(m => m.gig && m.gig.title);
+        if (msgWithGig) return { gigId: msgWithGig.gig, gigTitle: msgWithGig.gig.title };
+        return null;
+    })();
+
     const handleSend = async (e) => {
         e.preventDefault();
         if (!input.trim()) return;
         // Send to backend (save)
+        const body = { receiver: userId, content: input };
+        if (gigIdFromState) body.gig = gigIdFromState;
         await fetch(`${process.env.REACT_APP_SERVER_URL}/api/messages`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ receiver: userId, content: input }),
+            body: JSON.stringify(body),
         });
         // Emit via socket
         socket.emit('chat:send', { sender: user.id, receiver: userId, content: input });
-        setMessages((prev) => [...prev, { sender: user.id, receiver: userId, content: input, timestamp: new Date() }]);
+        setMessages((prev) => [...prev, { sender: user.id, receiver: userId, content: input, timestamp: new Date(), gig: gigIdFromState ? { _id: gigIdFromState, title: gigTitleFromState } : undefined }]);
         setInput('');
     };
 
@@ -158,6 +173,11 @@ const Chat = () => {
     return (
         <div style={chatBox}>
             <div style={{ fontWeight: 700, fontSize: '1.2rem', marginBottom: 12 }}>Chat</div>
+            {gigBanner && (
+                <div style={{ background: '#f5f5f5', color: '#1dbf73', fontWeight: 600, borderRadius: 8, padding: '0.6rem 1rem', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span role="img" aria-label="gig">🛒</span> Gig: {gigBanner.gigTitle}
+                </div>
+            )}
             <div style={messagesArea}>
                 {messages.map((msg, i) => {
                     const isMe = msg.sender === user.id;
