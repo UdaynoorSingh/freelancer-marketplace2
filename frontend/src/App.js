@@ -13,6 +13,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { useEffect, useState } from 'react';
 import { MdStar, MdFavoriteBorder } from 'react-icons/md';
 import GigDetails from './pages/GigDetails';
+import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 
 
 const homeContainer = {
@@ -289,6 +291,20 @@ function App() {
                         <ProtectedRoute>
                             <ProtectedLayout>
                                 <EditGig />
+                            </ProtectedLayout>
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/profile" element={
+                        <ProtectedRoute>
+                            <ProtectedLayout>
+                                <Profile />
+                            </ProtectedLayout>
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/settings" element={
+                        <ProtectedRoute>
+                            <ProtectedLayout>
+                                <Settings />
                             </ProtectedLayout>
                         </ProtectedRoute>
                     } />

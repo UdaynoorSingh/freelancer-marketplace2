@@ -76,4 +76,24 @@ exports.login = async (req, res) => {
         console.error('Login error:', err);
         res.status(500).json({ message: 'Server error', error: err.message });
     }
+};
+
+exports.updateUsername = async (req, res) => {
+    try {
+        const { username } = req.body;
+        // Check if username is taken
+        const existing = await User.findOne({ username });
+        if (existing && existing._id.toString() !== req.user.id) {
+            return res.status(400).json({ message: 'Username already taken' });
+        }
+        const user = await User.findByIdAndUpdate(
+            req.user.id,
+            { username },
+            { new: true }
+        );
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json({ message: 'Username updated', username: user.username });
+    } catch (err) {
+        res.status(500).json({ message: 'Error updating username', error: err.message });
+    }
 }; 
