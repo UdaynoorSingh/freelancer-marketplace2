@@ -70,6 +70,7 @@ const Chat = () => {
     const [otherUser, setOtherUser] = useState(null);
     const [order, setOrder] = useState(null);
     const messagesEndRef = useRef();
+    const [gigBannerState, setGigBannerState] = useState(null);
 
     // Fetch other user's info
     useEffect(() => {
@@ -104,18 +105,28 @@ const Chat = () => {
 
     useEffect(() => {
         if (!user || !userId) return;
-        // Join own room
         socket.emit('join', user.id);
         // Fetch chat history
         fetch(`${process.env.REACT_APP_SERVER_URL}/api/messages/${userId}`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then(res => res.json())
-            .then(data => setMessages(Array.isArray(data) ? data : []));
+            .then(data => {
+                setMessages(Array.isArray(data) ? data : []);
+                // Set gig banner to latest gig if present
+                if (Array.isArray(data) && data.length > 0) {
+                    const lastWithGig = [...data].reverse().find(m => m.gig && m.gig.title);
+                    if (lastWithGig) setGigBannerState({ gigId: lastWithGig.gig._id || lastWithGig.gig, gigTitle: lastWithGig.gig.title });
+                }
+            });
         // Listen for incoming messages
         socket.on('chat:receive', (msg) => {
             if (msg.sender === userId) {
-                setMessages((prev) => [...prev, { sender: userId, receiver: user.id, content: msg.content, timestamp: msg.timestamp }]);
+                setMessages((prev) => [...prev, { sender: userId, receiver: user.id, content: msg.content, timestamp: msg.timestamp, gig: msg.gig }]);
+                // If gig info present, update gig banner
+                if (msg.gig && msg.gig.title) {
+                    setGigBannerState({ gigId: msg.gig._id || msg.gig, gigTitle: msg.gig.title });
+                }
             }
         });
         return () => {
@@ -127,15 +138,14 @@ const Chat = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
-    // Track if gig banner should be shown
-    const gigBanner = (() => {
-        // If gigIdFromState, show banner
-        if (gigIdFromState && gigTitleFromState) return { gigId: gigIdFromState, gigTitle: gigTitleFromState };
-        // Else, check if any message has gig
-        const msgWithGig = messages.find(m => m.gig && m.gig.title);
-        if (msgWithGig) return { gigId: msgWithGig.gig, gigTitle: msgWithGig.gig.title };
-        return null;
-    })();
+    // Prefer gigBannerState if set, else fallback to gigIdFromState or messages
+    const gigBanner = gigBannerState
+        || (gigIdFromState && gigTitleFromState ? { gigId: gigIdFromState, gigTitle: gigTitleFromState } : null)
+        || (() => {
+            const msgWithGig = messages.find(m => m.gig && m.gig.title);
+            if (msgWithGig) return { gigId: msgWithGig.gig, gigTitle: msgWithGig.gig.title };
+            return null;
+        })();
 
     const handleSend = async (e) => {
         e.preventDefault();
@@ -152,8 +162,12 @@ const Chat = () => {
             body: JSON.stringify(body),
         });
         // Emit via socket
-        socket.emit('chat:send', { sender: user.id, receiver: userId, content: input });
+        socket.emit('chat:send', { sender: user.id, receiver: userId, content: input, gig: gigIdFromState ? { _id: gigIdFromState, title: gigTitleFromState } : undefined });
         setMessages((prev) => [...prev, { sender: user.id, receiver: userId, content: input, timestamp: new Date(), gig: gigIdFromState ? { _id: gigIdFromState, title: gigTitleFromState } : undefined }]);
+        // Update gig banner for sender as well
+        if (gigIdFromState && gigTitleFromState) {
+            setGigBannerState({ gigId: gigIdFromState, gigTitle: gigTitleFromState });
+        }
         setInput('');
     };
 
