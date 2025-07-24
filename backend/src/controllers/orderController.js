@@ -50,4 +50,18 @@ exports.getOrder = async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: 'Error fetching order', error: err.message });
     }
+};
+
+exports.markCompleted = async (req, res) => {
+    try {
+        const order = await Order.findByIdAndUpdate(
+            req.params.id,
+            { status: 'completed' },
+            { new: true }
+        );
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+        res.json({ message: 'Order marked as completed', order });
+    } catch (err) {
+        res.status(500).json({ message: 'Error updating order', error: err.message });
+    }
 }; 

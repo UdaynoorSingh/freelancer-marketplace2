@@ -1,6 +1,8 @@
+// src/controllers/serviceController.js
 const Service = require('../models/Service');
 const fs = require('fs');
 const path = require('path');
+const Review = require('../models/Review');
 
 // ✅ Search services by query (title, description, tags) and category
 exports.searchServices = async (req, res) => {
@@ -24,7 +26,19 @@ exports.searchServices = async (req, res) => {
         const services = await Service.find(filter)
             .populate('seller', '_id username email');
 
-        res.json(services);
+        // For each service, fetch reviews and calculate avg rating/count
+        const servicesWithRatings = await Promise.all(services.map(async (service) => {
+            const reviews = await Review.find({ gigId: service._id });
+            const reviewCount = reviews.length;
+            const avgRating = reviewCount > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount) : 0;
+            return {
+                ...service.toObject(),
+                avgRating: avgRating.toFixed(1),
+                reviewCount,
+            };
+        }));
+
+        res.json(servicesWithRatings);
     } catch (err) {
         res.status(500).json({ message: 'Error searching services', error: err.message });
     }

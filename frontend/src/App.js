@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
 import Register from './pages/Register';
@@ -17,6 +18,7 @@ import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Orders from './pages/Orders';
 import Chat from './pages/Chat';
+import AdminPanel from './pages/AdminPanel';
 
 
 const homeContainer = {
@@ -173,10 +175,9 @@ const Home = () => {
             {!loading && !error && gigs.length === 0 && <p>No gigs found.</p>}
             <div style={gridStyle}>
                 {gigs.map(service => {
-                    const reviewCount = service.reviews ? service.reviews.length : 0;
-                    const avgRating = reviewCount > 0
-                        ? (service.reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount).toFixed(1)
-                        : (service.rating || 4.9);
+                  const avgRating = service.avgRating || "0.0";
+                  const reviewCount = service.reviewCount || 0;
+
                     return (
                         <div key={service._id} style={cardStyle}>
                             <button style={favBtn}><MdFavoriteBorder size={20} color="#404145" /></button>
@@ -312,6 +313,7 @@ function App() {
                     } />
                     <Route path="/orders" element={<ProtectedRoute><ProtectedLayout><Orders /></ProtectedLayout></ProtectedRoute>} />
                     <Route path="/chat/:userId" element={<ProtectedRoute><ProtectedLayout><Chat /></ProtectedLayout></ProtectedRoute>} />
+                    <Route path="/admin" element={<ProtectedRoute><ProtectedLayout><AdminPanel /></ProtectedLayout></ProtectedRoute>} />
                 </Routes>
             </Router>
         </AuthProvider>

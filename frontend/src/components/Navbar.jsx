@@ -152,6 +152,8 @@ const socket = io(process.env.REACT_APP_SERVER_URL, {
     withCredentials: true,
 });
 
+const REACT_APP_ADMIN_EMAIL = process.env.REACT_APP_ADMIN_EMAIL;
+
 const Navbar = () => {
     const [search, setSearch] = useState('');
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -275,6 +277,14 @@ const Navbar = () => {
                                 onMouseLeave={() => setHovered(null)}
                                 onClick={() => { setDropdownOpen(false); navigate('/settings'); }}
                             >Account settings</button>
+                            {user && user.email === REACT_APP_ADMIN_EMAIL && (
+                                <button
+                                    style={hovered === 'admin' ? dropdownItemHover : dropdownItem}
+                                    onMouseEnter={() => setHovered('admin')}
+                                    onMouseLeave={() => setHovered(null)}
+                                    onClick={() => { setDropdownOpen(false); navigate('/admin'); }}
+                                >Admin</button>
+                            )}
                             <hr style={{ margin: '0.5rem 0', border: 'none', borderTop: '1px solid #eee' }} />
                             <button
                                 style={hovered === 'logout' ? dropdownItemHover : dropdownItem}

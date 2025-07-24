@@ -126,6 +126,11 @@ const SearchResults = () => {
         setError('Failed to fetch results.');
         setLoading(false);
       });
+    // Check for refreshSearch flag
+    if (localStorage.getItem('refreshSearch') === 'true') {
+      localStorage.removeItem('refreshSearch');
+      // Optionally, you could re-fetch here, but since this useEffect runs on mount, it's enough
+    }
   }, [search, category]);
 
   return (
@@ -139,11 +144,9 @@ const SearchResults = () => {
       {!loading && !error && results.length === 0 && <p>No results found.</p>}
       <div style={gridStyle}>
         {results.map(service => {
-          // Calculate average rating and review count
-          const reviewCount = service.reviews ? service.reviews.length : 0;
-          const avgRating = reviewCount > 0
-            ? (service.reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount).toFixed(1)
-            : (service.rating || 4.9);
+          // Use avgRating and reviewCount from backend
+          const avgRating = service.avgRating !== undefined ? service.avgRating : (service.rating || 4.9);
+          const reviewCount = service.reviewCount !== undefined ? service.reviewCount : (service.reviews ? service.reviews.length : 0);
           const images = service.images || [];
           return (
             <div key={service._id} style={cardStyle}>

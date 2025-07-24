@@ -1,3 +1,5 @@
+
+
 const mongoose = require('mongoose');
 
 const reviewSchema = new mongoose.Schema({
@@ -14,7 +16,7 @@ const serviceSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     category: { type: String, required: true },
-    images: [{ type: String }], // Changed from image to images array
+    images: [{ type: String }], 
     rating: { type: Number, default: 0 },
     reviews: [reviewSchema],
     createdAt: { type: Date, default: Date.now }

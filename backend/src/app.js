@@ -20,6 +20,8 @@ const ordersRouter = require('./routes/orders');
 app.use('/api/orders', ordersRouter);
 const messagesRouter = require('./routes/messages');
 app.use('/api/messages', messagesRouter);
+const reviewsRouter = require('./routes/reviews');
+app.use('/api/reviews', reviewsRouter);
 
 // Global error handler
 app.use((err, req, res, next) => {

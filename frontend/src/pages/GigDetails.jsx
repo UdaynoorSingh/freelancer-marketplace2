@@ -1,3 +1,4 @@
+// pages/GigDetails.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MdStar, MdChevronLeft, MdChevronRight, MdEdit, MdDelete } from 'react-icons/md';
@@ -126,6 +127,10 @@ const modalCancelBtn = {
   background: '#eee',
   color: '#222',
 };
+const starStyle = {
+  color: '#f7931e',
+  marginRight: 2,
+};
 
 const GigDetails = () => {
   const { id } = useParams();
@@ -138,6 +143,10 @@ const GigDetails = () => {
   const [loading, setLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [purchaseMsg, setPurchaseMsg] = useState('');
+  const [reviews, setReviews] = useState([]);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewMsg, setReviewMsg] = useState('');
+  const [reviewData, setReviewData] = useState({ rating: 5, comment: '' });
 
   useEffect(() => {
     const fetchGig = async () => {
@@ -158,6 +167,14 @@ const GigDetails = () => {
 
     fetchGig();
   }, [id]);
+
+  useEffect(() => {
+    if (gig && gig._id) {
+      fetch(`${process.env.REACT_APP_SERVER_URL}/api/reviews/${gig._id}`)
+        .then(res => res.json())
+        .then(data => setReviews(Array.isArray(data) ? data : []));
+    }
+  }, [gig]);
 
   const handlePrev = () => {
     if (!gig?.images?.length) return;
@@ -203,20 +220,49 @@ const GigDetails = () => {
     }
   };
 
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    setReviewMsg('');
+    try {
+      const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/reviews/${gig._id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(reviewData),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setReviewMsg('Review submitted!');
+        setShowReviewForm(false);
+        setReviews(prev => [...prev, data]);
+        // Signal to refresh search results
+        localStorage.setItem('refreshSearch', 'true');
+      } else {
+        setReviewMsg(data.message || 'Failed to submit review.');
+      }
+    } catch (err) {
+      setReviewMsg('Failed to submit review.');
+    }
+  };
+
   if (loading) return <div style={{ padding: '2rem' }}>Loading...</div>;
   if (error) return <div style={{ padding: '2rem', color: 'red' }}>{error}</div>;
   if (!gig) return null;
 
-  const reviewCount = gig.reviews?.length || 0;
-  const avgRating = reviewCount
-    ? (gig.reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount).toFixed(1)
-    : gig.rating || 4.9;
+const reviewCount = reviews.length;
+const avgRating = reviewCount
+  ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount).toFixed(1)
+  : 0;
+
 
   const imageURL = gig.images?.[idx]
     ? `${process.env.REACT_APP_SERVER_URL}/uploads/${gig.images[idx]}`
     : 'https://via.placeholder.com/320x180?text=No+Image';
 
   const isOwner = user && gig.seller && String(user.id) === String(gig.seller._id);
+  const canReview = !reviews.some(r => r.userId?._id === user?.id) && !isOwner;
 
   return (
     <div style={cardStyle}>
@@ -317,6 +363,41 @@ const GigDetails = () => {
               <MdDelete size={18} /> Delete
             </button>
           </div>
+        )}
+      </div>
+
+      <div style={{ marginTop: 32 }}>
+        <h3 style={{ color: '#1dbf73', fontWeight: 700, marginBottom: 10 }}>Reviews</h3>
+        {reviews.length === 0 && <div>No reviews yet.</div>}
+        {reviews.map((r, i) => (
+          <div key={i} style={{ background: '#f7f7f7', borderRadius: 8, padding: '1rem', marginBottom: 12 }}>
+            <div style={{ fontWeight: 600 }}>{r.userId?.username || 'User'}</div>
+            <div style={{ display: 'flex', alignItems: 'center', margin: '4px 0' }}>
+              {[...Array(r.rating)].map((_, idx) => <span key={idx} style={starStyle}>★</span>)}
+              {[...Array(5 - r.rating)].map((_, idx) => <span key={idx} style={{ ...starStyle, color: '#ddd' }}>★</span>)}
+            </div>
+            <div style={{ color: '#555', fontSize: '1rem' }}>{r.comment}</div>
+            <div style={{ color: '#888', fontSize: '0.92rem', marginTop: 2 }}>{new Date(r.timestamp).toLocaleString()}</div>
+          </div>
+        ))}
+        {canReview && !showReviewForm && (
+          <button style={{ background: '#1dbf73', color: '#fff', border: 'none', borderRadius: 8, padding: '0.7rem 1.5rem', fontWeight: 700, fontSize: '1rem', cursor: 'pointer', marginTop: 10 }} onClick={() => setShowReviewForm(true)}>Leave a Review</button>
+        )}
+        {showReviewForm && (
+          <form onSubmit={handleReviewSubmit} style={{ marginTop: 12, background: '#fff', borderRadius: 8, padding: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>
+            <div style={{ marginBottom: 8 }}>
+              <label style={{ fontWeight: 600 }}>Rating: </label>
+              <select value={reviewData.rating} onChange={e => setReviewData({ ...reviewData, rating: Number(e.target.value) })} style={{ marginLeft: 8, fontSize: '1rem' }}>
+                {[5, 4, 3, 2, 1].map(n => <option key={n} value={n}>{n}</option>)}
+              </select>
+            </div>
+            <div style={{ marginBottom: 8 }}>
+              <label style={{ fontWeight: 600 }}>Comment: </label>
+              <textarea value={reviewData.comment} onChange={e => setReviewData({ ...reviewData, comment: e.target.value })} rows={3} style={{ width: '100%', borderRadius: 6, border: '1px solid #ccc', padding: 8, fontSize: '1rem' }} />
+            </div>
+            <button type="submit" style={{ background: '#1dbf73', color: '#fff', border: 'none', borderRadius: 8, padding: '0.7rem 1.5rem', fontWeight: 700, fontSize: '1rem', cursor: 'pointer' }}>Submit</button>
+            {reviewMsg && <div style={{ color: reviewMsg.includes('submitted') ? '#1dbf73' : 'red', marginTop: 8 }}>{reviewMsg}</div>}
+          </form>
         )}
       </div>
 
