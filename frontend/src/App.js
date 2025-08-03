@@ -491,6 +491,7 @@ function App() {
                         </ProtectedRoute>
                     } />
                     <Route path="/orders" element={<ProtectedRoute><ProtectedLayout><Orders /></ProtectedLayout></ProtectedRoute>} />
+                    <Route path="/chat" element={<ProtectedRoute><ProtectedLayout><Chat /></ProtectedLayout></ProtectedRoute>} />
                     <Route path="/chat/:userId" element={<ProtectedRoute><ProtectedLayout><Chat /></ProtectedLayout></ProtectedRoute>} />
                     <Route path="/admin" element={<ProtectedRoute><ProtectedLayout><AdminPanel /></ProtectedLayout></ProtectedRoute>} />
                     <Route path="/favorites" element={<ProtectedRoute><ProtectedLayout><Favorites /></ProtectedLayout></ProtectedRoute>} />

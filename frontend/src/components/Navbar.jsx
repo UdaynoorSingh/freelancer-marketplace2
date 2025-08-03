@@ -246,6 +246,7 @@ const Navbar = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [favoritesCount, setFavoritesCount] = useState(0);
+    const [unreadMessages, setUnreadMessages] = useState(0);
     const dropdownRef = useRef();
     const avatarRef = useRef();
 
@@ -274,6 +275,23 @@ const Navbar = () => {
                 }
             })
             .catch(err => console.error('Error fetching favorites count:', err));
+    }, [user, token]);
+
+    // Fetch unread messages count
+    useEffect(() => {
+        if (!user || !token) return;
+
+        fetch(`${process.env.REACT_APP_SERVER_URL}/api/messages/conversations`, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    const totalUnread = data.reduce((sum, conv) => sum + (conv.unreadCount || 0), 0);
+                    setUnreadMessages(totalUnread);
+                }
+            })
+            .catch(err => console.error('Error fetching unread messages:', err));
     }, [user, token]);
 
     useEffect(() => {
@@ -352,6 +370,25 @@ const Navbar = () => {
 
                             <button style={iconButton} onClick={() => navigate('/chat')} title="Messages">
                                 <MdMessage size={22} color="#404145" />
+                                {unreadMessages > 0 && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '-8px',
+                                        right: '-8px',
+                                        background: '#e53e3e',
+                                        color: '#fff',
+                                        borderRadius: '50%',
+                                        width: '18px',
+                                        height: '18px',
+                                        fontSize: '0.7rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontWeight: '600'
+                                    }}>
+                                        {unreadMessages}
+                                    </div>
+                                )}
                             </button>
 
                             <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => navigate('/favorites')} className="desktop-only">

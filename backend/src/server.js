@@ -18,15 +18,34 @@ const io = new Server(server, {
 
 // Socket.io logic
 io.on('connection', (socket) => {
+    console.log('User connected:', socket.id);
+
     // Join room for user
     socket.on('join', (userId) => {
-        socket.join(userId);
+        if (userId) {
+            socket.join(userId);
+            console.log(`User ${userId} joined their room`);
+        }
     });
 
     // Forward chat messages
-    socket.on('chat:send', ({ sender, receiver, content }) => {
-        // Emit to receiver's room
-        io.to(receiver).emit('chat:receive', { sender, content, timestamp: new Date() });
+    socket.on('chat:send', ({ sender, receiver, content, gig }) => {
+        try {
+            console.log('Message from', sender, 'to', receiver, ':', content);
+            // Emit to receiver's room
+            io.to(receiver).emit('chat:receive', {
+                sender,
+                content,
+                timestamp: new Date(),
+                gig
+            });
+        } catch (error) {
+            console.error('Socket error:', error);
+        }
+    });
+
+    socket.on('disconnect', () => {
+        console.log('User disconnected:', socket.id);
     });
 });
 
