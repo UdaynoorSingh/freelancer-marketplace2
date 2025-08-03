@@ -3,45 +3,68 @@ import { loginUser } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
+// Updated color scheme - Modern Purple/Blue Theme
+const primaryColor = '#6366f1'; // Indigo
+const secondaryColor = '#8b5cf6'; // Purple
+const accentColor = '#06b6d4'; // Cyan
+const successColor = '#10b981'; // Emerald
+const warningColor = '#f59e0b'; // Amber
+const dangerColor = '#ef4444'; // Red
+const darkColor = '#1e293b'; // Slate
+const lightColor = '#f8fafc'; // Slate light
+const textPrimary = '#1e293b'; // Slate dark
+const textSecondary = '#64748b'; // Slate medium
+const borderColor = '#e2e8f0'; // Slate light border
+
 const formContainer = {
     minHeight: '100vh',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: 'linear-gradient(135deg, #1dbf73 0%, #f7f7f7 100%)',
+    background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
+    padding: '2rem',
 };
 const formStyle = {
     background: '#fff',
-    padding: '2rem',
-    borderRadius: '12px',
-    boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+    padding: '3rem',
+    borderRadius: '20px',
+    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
     width: '100%',
     maxWidth: '400px',
+    border: '1px solid #e2e8f0',
 };
 const inputStyle = {
     width: '100%',
     marginBottom: '1rem',
-    padding: '0.75rem',
-    border: '1px solid #ccc',
-    borderRadius: '6px',
+    padding: '0.75rem 1rem',
+    border: `1px solid ${borderColor}`,
+    borderRadius: '8px',
     fontSize: '1rem',
     outline: 'none',
-    transition: 'border 0.2s',
+    transition: 'all 0.2s ease',
+    background: '#fff',
 };
 const buttonStyle = {
     width: '100%',
-    background: '#1dbf73',
+    background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
     color: '#fff',
-    padding: '0.75rem',
+    padding: '0.75rem 1.5rem',
     border: 'none',
-    borderRadius: '6px',
-    fontWeight: 'bold',
+    borderRadius: '8px',
+    fontWeight: 600,
     fontSize: '1rem',
     cursor: 'pointer',
     marginTop: '1rem',
-    transition: 'background 0.2s',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
 };
-const errorStyle = { color: '#e53e3e', marginBottom: '1rem', fontWeight: 500 };
+const errorStyle = {
+    color: dangerColor,
+    marginBottom: '1rem',
+    fontWeight: 500,
+    textAlign: 'center',
+    fontSize: '0.9rem',
+};
 
 const Login = () => {
     const [form, setForm] = useState({ email: '', password: '' });
@@ -72,7 +95,7 @@ const Login = () => {
     return (
         <div style={formContainer}>
             <form onSubmit={handleSubmit} style={formStyle}>
-                <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '1.5rem', textAlign: 'center', color: '#1dbf73' }}>Login</h2>
+                <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '1.5rem', textAlign: 'center', color: textPrimary }}>Login</h2>
                 {error && <div style={errorStyle}>{error}</div>}
                 <input
                     type="email"
@@ -92,9 +115,9 @@ const Login = () => {
                     style={inputStyle}
                     required
                 />
-                <button type="submit" style={buttonStyle} onMouseOver={e => e.target.style.background = '#169c5f'} onMouseOut={e => e.target.style.background = '#1dbf73'}>Login</button>
-                <p style={{ marginTop: '1rem', textAlign: 'center', fontSize: '0.95rem' }}>
-                    Don't have an account? <a href="/register" style={{ color: '#1dbf73', textDecoration: 'underline' }}>Register</a>
+                <button type="submit" style={buttonStyle} onMouseOver={e => { e.target.style.transform = 'translateY(-1px)'; e.target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)'; }} onMouseOut={e => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)'; }}>Login</button>
+                <p style={{ marginTop: '1rem', textAlign: 'center', fontSize: '0.95rem', color: textSecondary }}>
+                    Don't have an account? <a href="/register" style={{ color: primaryColor, textDecoration: 'none', fontWeight: 600, transition: 'color 0.2s ease' }}>Register</a>
                 </p>
             </form>
         </div>

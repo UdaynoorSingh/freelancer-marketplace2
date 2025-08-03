@@ -4,11 +4,25 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { MdStar, MdChevronLeft, MdChevronRight, MdEdit, MdDelete, MdFavoriteBorder, MdFavorite } from 'react-icons/md';
 import { useAuth } from '../contexts/AuthContext';
 import { deleteService, getService } from '../services/serviceApi';
+import PaymentForm from '../components/PaymentForm';
+
+// Updated color scheme - Modern Purple/Blue Theme
+const primaryColor = '#6366f1'; // Indigo
+const secondaryColor = '#8b5cf6'; // Purple
+const accentColor = '#06b6d4'; // Cyan
+const successColor = '#10b981'; // Emerald
+const warningColor = '#f59e0b'; // Amber
+const dangerColor = '#ef4444'; // Red
+const darkColor = '#1e293b'; // Slate
+const lightColor = '#f8fafc'; // Slate light
+const textPrimary = '#1e293b'; // Slate dark
+const textSecondary = '#64748b'; // Slate medium
+const borderColor = '#e2e8f0'; // Slate light border
 
 const cardStyle = {
   background: '#fff',
-  borderRadius: '12px',
-  boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+  borderRadius: '16px',
+  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.06)',
   padding: 0,
   maxWidth: 500,
   margin: '2rem auto',
@@ -16,20 +30,23 @@ const cardStyle = {
   flexDirection: 'column',
   overflow: 'hidden',
   position: 'relative',
+  border: '1px solid #e2e8f0',
 };
+
 const imageStyle = {
   width: '100%',
   height: 260,
   objectFit: 'cover',
-  borderTopLeftRadius: '12px',
-  borderTopRightRadius: '12px',
-  background: '#f5f5f5',
+  borderTopLeftRadius: '16px',
+  borderTopRightRadius: '16px',
+  background: `linear-gradient(135deg, ${lightColor} 0%, #e2e8f0 100%)`,
 };
+
 const carouselBtn = {
   position: 'absolute',
   top: '50%',
   transform: 'translateY(-50%)',
-  background: 'rgba(255,255,255,0.8)',
+  background: 'rgba(255,255,255,0.9)',
   border: 'none',
   borderRadius: '50%',
   width: 32,
@@ -39,19 +56,21 @@ const carouselBtn = {
   justifyContent: 'center',
   cursor: 'pointer',
   zIndex: 3,
-  boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
 };
+
 const sellerRow = {
   display: 'flex',
   alignItems: 'center',
   gap: '0.7rem',
   margin: '1rem 0 0.5rem 0',
 };
+
 const avatar = {
   width: 32,
   height: 32,
   borderRadius: '50%',
-  background: '#f7931e',
+  background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
   color: '#fff',
   fontWeight: 700,
   display: 'flex',
@@ -59,12 +78,14 @@ const avatar = {
   justifyContent: 'center',
   fontSize: '1.1rem',
 };
+
 const btnRow = {
   display: 'flex',
   gap: '1rem',
   marginTop: '2rem',
   justifyContent: 'flex-end',
 };
+
 const actionBtn = {
   padding: '0.5rem 1.2rem',
   borderRadius: '8px',
@@ -73,16 +94,19 @@ const actionBtn = {
   fontSize: '1rem',
   cursor: 'pointer',
 };
+
 const editBtn = {
   ...actionBtn,
-  background: '#1dbf73',
+  background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
   color: '#fff',
 };
+
 const deleteBtn = {
   ...actionBtn,
-  background: '#e53e3e',
+  background: dangerColor,
   color: '#fff',
 };
+
 const modalOverlay = {
   position: 'fixed',
   top: 0,
@@ -95,6 +119,7 @@ const modalOverlay = {
   justifyContent: 'center',
   zIndex: 9999,
 };
+
 const modalBox = {
   background: '#fff',
   borderRadius: 12,
@@ -103,12 +128,14 @@ const modalBox = {
   minWidth: 320,
   textAlign: 'center',
 };
+
 const modalBtnRow = {
   display: 'flex',
   gap: '1rem',
   marginTop: '1.5rem',
   justifyContent: 'center',
 };
+
 const modalBtn = {
   padding: '0.5rem 1.2rem',
   borderRadius: '8px',
@@ -117,18 +144,21 @@ const modalBtn = {
   fontSize: '1rem',
   cursor: 'pointer',
 };
+
 const modalDeleteBtn = {
   ...modalBtn,
-  background: '#e53e3e',
+  background: dangerColor,
   color: '#fff',
 };
+
 const modalCancelBtn = {
   ...modalBtn,
   background: '#eee',
   color: '#222',
 };
+
 const starStyle = {
-  color: '#f7931e',
+  color: warningColor,
   marginRight: 2,
 };
 
@@ -142,6 +172,7 @@ const GigDetails = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [purchaseMsg, setPurchaseMsg] = useState('');
   const [reviews, setReviews] = useState([]);
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -331,7 +362,7 @@ const GigDetails = () => {
               position: 'absolute',
               top: 12,
               right: 12,
-              background: isFavorite ? '#e53e3e' : '#fff',
+              background: isFavorite ? dangerColor : '#fff',
               border: 'none',
               borderRadius: '50%',
               boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
@@ -354,19 +385,19 @@ const GigDetails = () => {
       <div style={{ padding: '0 1.2rem 1.2rem 1.2rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={sellerRow}>
           <div style={avatar}>{gig.seller?.username?.[0]?.toUpperCase() || 'U'}</div>
-          <span style={{ color: '#222', fontWeight: 600 }}>{gig.seller?.username || 'Unknown'}</span>
+          <span style={{ color: textPrimary, fontWeight: 600 }}>{gig.seller?.username || 'Unknown'}</span>
           {gig.seller?.email && (
-            <span style={{ color: '#888', fontSize: '0.97rem', marginLeft: 8 }}>
+            <span style={{ color: textSecondary, fontSize: '0.97rem', marginLeft: 8 }}>
               {gig.seller.email}
             </span>
           )}
-          <span style={{ color: '#888', fontSize: '0.95rem', marginLeft: 'auto' }}>Level 1 ◆◆</span>
+
         </div>
 
-        <div style={{ color: '#222', fontWeight: 500, fontSize: '1.08rem', marginBottom: 6 }}>{gig.title}</div>
-        <div style={{ color: '#555', fontSize: '0.98rem', marginBottom: 8 }}>{gig.description}</div>
+        <div style={{ color: textPrimary, fontWeight: 500, fontSize: '1.08rem', marginBottom: 6 }}>{gig.title}</div>
+        <div style={{ color: textSecondary, fontSize: '0.98rem', marginBottom: 8 }}>{gig.description}</div>
 
-        <div style={{ margin: '0.5rem 0', color: '#1dbf73', fontWeight: 500 }}>
+        <div style={{ margin: '0.5rem 0', color: successColor, fontWeight: 500 }}>
           {gig.tags?.map(tag => (
             <span key={tag} style={{ marginRight: 8, fontSize: '0.95rem', background: '#f5f5f5', borderRadius: 6, padding: '2px 8px' }}>
               #{tag}
@@ -375,11 +406,11 @@ const GigDetails = () => {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', marginTop: 8 }}>
-          <MdStar color="#f7931e" size={18} />
-          <span style={{ color: '#222', fontWeight: 600, marginLeft: 4 }}>{avgRating}</span>
-          <span style={{ color: '#888', fontSize: '0.95rem', marginLeft: 4 }}>({reviewCount})</span>
-          <span style={{ marginLeft: 'auto', color: '#555', fontSize: '0.95rem', marginRight: 4 }}>From</span>
-          <span style={{ color: '#222', fontWeight: 700, fontSize: '1.1rem' }}>₹{gig.price}</span>
+          <MdStar color={warningColor} size={18} />
+          <span style={{ color: textPrimary, fontWeight: 600, marginLeft: 4 }}>{avgRating}</span>
+          <span style={{ color: textSecondary, fontSize: '0.95rem', marginLeft: 4 }}>({reviewCount})</span>
+          <span style={{ marginLeft: 'auto', color: textSecondary, fontSize: '0.95rem', marginRight: 4 }}>From</span>
+          <span style={{ color: textPrimary, fontWeight: 700, fontSize: '1.1rem' }}>₹{gig.price}</span>
         </div>
 
         {/* Purchase Button (not for owner) */}
@@ -387,7 +418,7 @@ const GigDetails = () => {
           <>
             <button
               style={{
-                background: '#1dbf73',
+                background: successColor,
                 color: '#fff',
                 border: 'none',
                 borderRadius: 8,
@@ -399,15 +430,15 @@ const GigDetails = () => {
                 boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
                 transition: 'background 0.2s',
               }}
-              onClick={handlePurchase}
+              onClick={() => setShowPaymentModal(true)}
             >
-              Purchase
+              Purchase Now
             </button>
             <button
               style={{
                 background: '#fff',
-                color: '#1dbf73',
-                border: '2px solid #1dbf73',
+                color: successColor,
+                border: `2px solid ${successColor}`,
                 borderRadius: 8,
                 padding: '0.9rem 2.2rem',
                 fontWeight: 700,
@@ -421,7 +452,7 @@ const GigDetails = () => {
             >
               Chat
             </button>
-            {purchaseMsg && <div style={{ color: purchaseMsg.includes('success') ? '#1dbf73' : 'red', marginTop: 8 }}>{purchaseMsg}</div>}
+            {purchaseMsg && <div style={{ color: purchaseMsg.includes('success') ? successColor : 'red', marginTop: 8 }}>{purchaseMsg}</div>}
           </>
         )}
 
@@ -438,7 +469,7 @@ const GigDetails = () => {
       </div>
 
       <div style={{ marginTop: 32 }}>
-        <h3 style={{ color: '#1dbf73', fontWeight: 700, marginBottom: 10 }}>Reviews</h3>
+        <h3 style={{ color: successColor, fontWeight: 700, marginBottom: 10 }}>Reviews</h3>
         {reviews.length === 0 && <div>No reviews yet.</div>}
         {reviews.map((r, i) => (
           <div key={i} style={{ background: '#f7f7f7', borderRadius: 8, padding: '1rem', marginBottom: 12 }}>
@@ -447,12 +478,12 @@ const GigDetails = () => {
               {[...Array(r.rating)].map((_, idx) => <span key={idx} style={starStyle}>★</span>)}
               {[...Array(5 - r.rating)].map((_, idx) => <span key={idx} style={{ ...starStyle, color: '#ddd' }}>★</span>)}
             </div>
-            <div style={{ color: '#555', fontSize: '1rem' }}>{r.comment}</div>
-            <div style={{ color: '#888', fontSize: '0.92rem', marginTop: 2 }}>{new Date(r.timestamp).toLocaleString()}</div>
+            <div style={{ color: textSecondary, fontSize: '1rem' }}>{r.comment}</div>
+            <div style={{ color: textSecondary, fontSize: '0.92rem', marginTop: 2 }}>{new Date(r.timestamp).toLocaleString()}</div>
           </div>
         ))}
         {canReview && !showReviewForm && (
-          <button style={{ background: '#1dbf73', color: '#fff', border: 'none', borderRadius: 8, padding: '0.7rem 1.5rem', fontWeight: 700, fontSize: '1rem', cursor: 'pointer', marginTop: 10 }} onClick={() => setShowReviewForm(true)}>Leave a Review</button>
+          <button style={{ background: successColor, color: '#fff', border: 'none', borderRadius: 8, padding: '0.7rem 1.5rem', fontWeight: 700, fontSize: '1rem', cursor: 'pointer', marginTop: 10 }} onClick={() => setShowReviewForm(true)}>Leave a Review</button>
         )}
         {showReviewForm && (
           <form onSubmit={handleReviewSubmit} style={{ marginTop: 12, background: '#fff', borderRadius: 8, padding: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>
@@ -466,8 +497,8 @@ const GigDetails = () => {
               <label style={{ fontWeight: 600 }}>Comment: </label>
               <textarea value={reviewData.comment} onChange={e => setReviewData({ ...reviewData, comment: e.target.value })} rows={3} style={{ width: '100%', borderRadius: 6, border: '1px solid #ccc', padding: 8, fontSize: '1rem' }} />
             </div>
-            <button type="submit" style={{ background: '#1dbf73', color: '#fff', border: 'none', borderRadius: 8, padding: '0.7rem 1.5rem', fontWeight: 700, fontSize: '1rem', cursor: 'pointer' }}>Submit</button>
-            {reviewMsg && <div style={{ color: reviewMsg.includes('submitted') ? '#1dbf73' : 'red', marginTop: 8 }}>{reviewMsg}</div>}
+            <button type="submit" style={{ background: successColor, color: '#fff', border: 'none', borderRadius: 8, padding: '0.7rem 1.5rem', fontWeight: 700, fontSize: '1rem', cursor: 'pointer' }}>Submit</button>
+            {reviewMsg && <div style={{ color: reviewMsg.includes('submitted') ? successColor : 'red', marginTop: 8 }}>{reviewMsg}</div>}
           </form>
         )}
       </div>
@@ -475,12 +506,45 @@ const GigDetails = () => {
       {showDeleteModal && (
         <div style={modalOverlay}>
           <div style={modalBox}>
-            <h3 style={{ color: '#e53e3e', marginBottom: 16 }}>Delete Gig?</h3>
+            <h3 style={{ color: dangerColor, marginBottom: 16 }}>Delete Gig?</h3>
             <p>Are you sure you want to delete this gig? This action cannot be undone.</p>
             <div style={modalBtnRow}>
               <button style={modalDeleteBtn} onClick={handleDelete}>Delete</button>
               <button style={modalCancelBtn} onClick={() => setShowDeleteModal(false)}>Cancel</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showPaymentModal && (
+        <div style={modalOverlay}>
+          <div style={{ ...modalBox, maxWidth: 600, width: '90%' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ color: textPrimary, margin: 0 }}>Complete Payment</h3>
+              <button
+                onClick={() => setShowPaymentModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '1.5rem',
+                  cursor: 'pointer',
+                  color: textSecondary
+                }}
+              >
+                ×
+              </button>
+            </div>
+            <PaymentForm
+              gig={gig}
+              onSuccess={(order) => {
+                setPurchaseMsg('Payment successful! Order created.');
+                setShowPaymentModal(false);
+                // You can navigate to order details or dashboard here
+              }}
+              onError={(error) => {
+                setPurchaseMsg(`Payment failed: ${error}`);
+              }}
+            />
           </div>
         </div>
       )}

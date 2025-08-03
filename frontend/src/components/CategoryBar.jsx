@@ -69,9 +69,7 @@ const CategoryBar = () => {
                     {cat.label}
                 </span>
             ))}
-            <button style={postBtn}>
-                <FiEdit size={18} /> Post a brief
-            </button>
+
         </div>
     );
 };

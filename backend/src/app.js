@@ -26,6 +26,8 @@ const favoritesRouter = require('./routes/favorites');
 app.use('/api/favorites', favoritesRouter);
 const adminRouter = require('./routes/admin');
 app.use('/api/admin', adminRouter);
+const paymentRouter = require('./routes/payment');
+app.use('/api/payment', paymentRouter);
 
 // Global error handler
 app.use((err, req, res, next) => {

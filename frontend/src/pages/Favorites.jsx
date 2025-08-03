@@ -3,6 +3,19 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { MdStar, MdFavorite, MdFavoriteBorder } from 'react-icons/md';
 
+// Updated color scheme - Modern Purple/Blue Theme
+const primaryColor = '#6366f1'; // Indigo
+const secondaryColor = '#8b5cf6'; // Purple
+const accentColor = '#06b6d4'; // Cyan
+const successColor = '#10b981'; // Emerald
+const warningColor = '#f59e0b'; // Amber
+const dangerColor = '#ef4444'; // Red
+const darkColor = '#1e293b'; // Slate
+const lightColor = '#f8fafc'; // Slate light
+const textPrimary = '#1e293b'; // Slate dark
+const textSecondary = '#64748b'; // Slate medium
+const borderColor = '#e2e8f0'; // Slate light border
+
 const containerStyle = {
     maxWidth: 1200,
     margin: '2.5rem auto',
@@ -11,9 +24,9 @@ const containerStyle = {
 
 const headerStyle = {
     background: '#fff',
-    borderRadius: 16,
-    boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
-    border: '1px solid #eee',
+    borderRadius: 20,
+    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+    border: '1px solid #e2e8f0',
     padding: '2rem',
     marginBottom: '2rem',
     textAlign: 'center',
@@ -21,8 +34,8 @@ const headerStyle = {
 
 const cardStyle = {
     background: '#fff',
-    borderRadius: '12px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+    borderRadius: '16px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
     padding: 0,
     margin: '1rem 0',
     maxWidth: 320,
@@ -33,6 +46,7 @@ const cardStyle = {
     overflow: 'hidden',
     position: 'relative',
     height: 440, // Fixed height for all cards
+    border: '1px solid #e2e8f0',
 };
 
 const imageStyle = {
@@ -55,7 +69,7 @@ const avatar = {
     width: 32,
     height: 32,
     borderRadius: '50%',
-    background: '#f7931e',
+    background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
     color: '#fff',
     fontWeight: 700,
     display: 'flex',
@@ -73,13 +87,13 @@ const gridStyle = {
 };
 
 const priceStyle = {
-    color: '#222',
+    color: textPrimary,
     fontWeight: 700,
     fontSize: '1.1rem',
 };
 
 const fromStyle = {
-    color: '#555',
+    color: textSecondary,
     fontSize: '0.95rem',
     marginRight: 4,
 };
@@ -110,7 +124,7 @@ const btnRow = {
 };
 
 const viewBtn = {
-    background: '#1dbf73',
+    background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
     color: '#fff',
     padding: '0.6rem 1.2rem',
     borderRadius: '8px',
@@ -120,11 +134,12 @@ const viewBtn = {
     fontSize: '0.95rem',
     width: '100%',
     textAlign: 'center',
-    transition: 'background-color 0.2s',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
 };
 
 const descriptionStyle = {
-    color: '#555',
+    color: textSecondary,
     fontSize: '0.98rem',
     marginBottom: 8,
     overflow: 'hidden',
@@ -199,8 +214,8 @@ const Favorites = () => {
         return (
             <div style={containerStyle}>
                 <div style={headerStyle}>
-                    <h1 style={{ color: '#1dbf73', fontWeight: 700, marginBottom: '0.5rem' }}>My Favorites</h1>
-                    <p style={{ color: '#666' }}>Loading your favorite gigs...</p>
+                    <h1 style={{ color: textPrimary, fontWeight: 700, marginBottom: '0.5rem' }}>My Favorites</h1>
+                    <p style={{ color: textSecondary }}>Loading your favorite gigs...</p>
                 </div>
             </div>
         );
@@ -210,8 +225,8 @@ const Favorites = () => {
         return (
             <div style={containerStyle}>
                 <div style={headerStyle}>
-                    <h1 style={{ color: '#e53e3e', fontWeight: 700, marginBottom: '0.5rem' }}>Error</h1>
-                    <p style={{ color: '#666' }}>{error}</p>
+                    <h1 style={{ color: dangerColor, fontWeight: 700, marginBottom: '0.5rem' }}>Error</h1>
+                    <p style={{ color: textSecondary }}>{error}</p>
                 </div>
             </div>
         );
@@ -298,8 +313,8 @@ const Favorites = () => {
         <div style={containerStyle}>
             <style>{responsiveStyles}</style>
             <div style={headerStyle}>
-                <h1 style={{ color: '#1dbf73', fontWeight: 700, marginBottom: '0.5rem' }}>My Favorites</h1>
-                <p style={{ color: '#666' }}>
+                <h1 style={{ color: textPrimary, fontWeight: 700, marginBottom: '0.5rem' }}>My Favorites</h1>
+                <p style={{ color: textSecondary }}>
                     {favorites.length === 0
                         ? "You haven't added any gigs to your favorites yet."
                         : `You have ${favorites.length} favorite gig${favorites.length === 1 ? '' : 's'}.`
@@ -310,20 +325,22 @@ const Favorites = () => {
             {favorites.length === 0 ? (
                 <div style={emptyStateStyle}>
                     <MdFavoriteBorder size={64} color="#ccc" style={{ marginBottom: '1rem' }} />
-                    <h3 style={{ color: '#666', marginBottom: '1rem' }}>No favorites yet</h3>
-                    <p style={{ color: '#888', marginBottom: '2rem' }}>
+                    <h3 style={{ color: textSecondary, marginBottom: '1rem' }}>No favorites yet</h3>
+                    <p style={{ color: textSecondary, marginBottom: '2rem' }}>
                         Start exploring gigs and add them to your favorites by clicking the heart icon!
                     </p>
                     <button
                         style={{
-                            background: '#1dbf73',
+                            background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
                             color: '#fff',
                             padding: '0.8rem 1.5rem',
                             borderRadius: '8px',
                             border: 'none',
                             cursor: 'pointer',
                             fontWeight: 600,
-                            fontSize: '1rem'
+                            fontSize: '1rem',
+                            transition: 'all 0.2s ease',
+                            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                         }}
                         onClick={() => navigate('/')}
                     >
@@ -360,17 +377,17 @@ const Favorites = () => {
                                 <div>
                                     <div style={sellerRow}>
                                         <div style={avatar}>{gig.seller?.username?.[0]?.toUpperCase() || 'U'}</div>
-                                        <span style={{ color: '#222', fontWeight: 600 }}>{gig.seller?.username || 'Unknown'}</span>
-                                        <span style={{ color: '#888', fontSize: '0.95rem', marginLeft: 'auto' }}>Level 1 ◆◆</span>
+                                        <span style={{ color: textPrimary, fontWeight: 600 }}>{gig.seller?.username || 'Unknown'}</span>
+
                                     </div>
-                                    <div style={{ color: '#222', fontWeight: 500, fontSize: '1.08rem', marginBottom: 6 }}>{gig.title}</div>
+                                    <div style={{ color: textPrimary, fontWeight: 500, fontSize: '1.08rem', marginBottom: 6 }}>{gig.title}</div>
                                     <div style={descriptionStyle}>{gig.description}</div>
                                     {gig.tags && gig.tags.length > 0 && (
                                         <div style={{ marginBottom: '0.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
                                             {gig.tags.slice(0, 3).map(tag => (
                                                 <span key={tag} style={{
                                                     fontSize: '0.85rem',
-                                                    background: '#1dbf73',
+                                                    background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
                                                     color: '#fff',
                                                     borderRadius: 6,
                                                     padding: '0.2rem 0.5rem',
@@ -383,14 +400,14 @@ const Favorites = () => {
                                     )}
                                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
                                         <MdStar color="#f7931e" size={16} />
-                                        <span style={{ color: '#222', fontWeight: 600, marginLeft: 4, fontSize: '0.9rem' }}>
+                                        <span style={{ color: textPrimary, fontWeight: 600, marginLeft: 4, fontSize: '0.9rem' }}>
                                             {gig.avgRating || '0.0'}
                                         </span>
-                                        <span style={{ color: '#888', fontSize: '0.85rem', marginLeft: 4 }}>
+                                        <span style={{ color: textSecondary, fontSize: '0.85rem', marginLeft: 4 }}>
                                             ({gig.reviewCount || 0})
                                         </span>
                                     </div>
-                                    <div style={{ margin: '0.5rem 0', color: '#1dbf73', fontWeight: 500 }}>
+                                    <div style={{ margin: '0.5rem 0', color: successColor, fontWeight: 500 }}>
                                         <span style={fromStyle}>from</span>
                                         <span style={priceStyle}>${gig.price}</span>
                                     </div>
@@ -399,8 +416,8 @@ const Favorites = () => {
                                     <button
                                         style={viewBtn}
                                         onClick={() => navigate(`/gig/${gig._id}`)}
-                                        onMouseOver={(e) => e.target.style.background = '#169c5f'}
-                                        onMouseOut={(e) => e.target.style.background = '#1dbf73'}
+                                        onMouseOver={(e) => { e.target.style.transform = 'translateY(-1px)'; e.target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)'; }}
+                                        onMouseOut={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)'; }}
                                     >
                                         View Details
                                     </button>

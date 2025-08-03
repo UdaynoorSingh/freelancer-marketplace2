@@ -3,14 +3,27 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { MdStar, MdFavoriteBorder, MdFavorite } from 'react-icons/md';
 import { useAuth } from '../contexts/AuthContext';
 
+// Updated color scheme - Modern Purple/Blue Theme
+const primaryColor = '#6366f1'; // Indigo
+const secondaryColor = '#8b5cf6'; // Purple
+const accentColor = '#06b6d4'; // Cyan
+const successColor = '#10b981'; // Emerald
+const warningColor = '#f59e0b'; // Amber
+const dangerColor = '#ef4444'; // Red
+const darkColor = '#1e293b'; // Slate
+const lightColor = '#f8fafc'; // Slate light
+const textPrimary = '#1e293b'; // Slate dark
+const textSecondary = '#64748b'; // Slate medium
+const borderColor = '#e2e8f0'; // Slate light border
+
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
 const cardStyle = {
   background: '#fff',
-  borderRadius: '12px',
-  boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+  borderRadius: '16px',
+  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
   padding: 0,
   margin: '1rem 0',
   maxWidth: 320,
@@ -21,6 +34,7 @@ const cardStyle = {
   overflow: 'hidden',
   position: 'relative',
   height: 440, // Fixed height for all cards
+  border: '1px solid #e2e8f0',
 };
 
 const imageStyle = {
@@ -43,7 +57,7 @@ const avatar = {
   width: 32,
   height: 32,
   borderRadius: '50%',
-  background: '#f7931e',
+  background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
   color: '#fff',
   fontWeight: 700,
   display: 'flex',
@@ -60,13 +74,13 @@ const gridStyle = {
 };
 
 const priceStyle = {
-  color: '#222',
+  color: textPrimary,
   fontWeight: 700,
   fontSize: '1.1rem',
 };
 
 const fromStyle = {
-  color: '#555',
+  color: textSecondary,
   fontSize: '0.95rem',
   marginRight: 4,
 };
@@ -89,7 +103,7 @@ const favBtn = {
 };
 
 const descriptionStyle = {
-  color: '#555',
+  color: textSecondary,
   fontSize: '0.98rem',
   marginBottom: 8,
   overflow: 'hidden',
@@ -328,7 +342,7 @@ const SearchResults = () => {
                   <div style={sellerRow}>
                     <div style={avatar}>{service.seller?.username ? service.seller.username[0].toUpperCase() : 'U'}</div>
                     <span style={{ color: '#222', fontWeight: 600 }}>{service.seller?.username || 'Unknown'}</span>
-                    <span style={{ color: '#888', fontSize: '0.95rem', marginLeft: 'auto' }}>Level 1 ◆◆</span>
+
                   </div>
                   <div style={{ color: '#222', fontWeight: 500, fontSize: '1.08rem', marginBottom: 6 }}>{service.title}</div>
                   <div style={descriptionStyle}>{service.description}</div>

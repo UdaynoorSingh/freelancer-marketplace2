@@ -3,12 +3,25 @@ import { useAuth } from '../contexts/AuthContext';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
+// Updated color scheme - Modern Purple/Blue Theme
+const primaryColor = '#6366f1'; // Indigo
+const secondaryColor = '#8b5cf6'; // Purple
+const accentColor = '#06b6d4'; // Cyan
+const successColor = '#10b981'; // Emerald
+const warningColor = '#f59e0b'; // Amber
+const dangerColor = '#ef4444'; // Red
+const darkColor = '#1e293b'; // Slate
+const lightColor = '#f8fafc'; // Slate light
+const textPrimary = '#1e293b'; // Slate dark
+const textSecondary = '#64748b'; // Slate medium
+const borderColor = '#e2e8f0'; // Slate light border
+
 const chatBox = {
     maxWidth: 500,
     margin: '2.5rem auto',
     background: '#fff',
     borderRadius: 16,
-    boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.07)',
     border: '1px solid #eee',
     padding: '2rem 1.5rem 1.5rem 1.5rem',
     display: 'flex',
@@ -21,7 +34,7 @@ const inboxStyle = {
     margin: '2.5rem auto',
     background: '#fff',
     borderRadius: 16,
-    boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.07)',
     border: '1px solid #eee',
     padding: '2rem',
 };
@@ -50,7 +63,7 @@ const messagesArea = {
 };
 const messageBubble = (isMe) => ({
     alignSelf: isMe ? 'flex-end' : 'flex-start',
-    background: isMe ? '#1dbf73' : '#f5f5f5',
+    background: isMe ? `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)` : '#f5f5f5',
     color: isMe ? '#fff' : '#222',
     borderRadius: 16,
     padding: '0.7rem 1.2rem',
@@ -71,7 +84,7 @@ const inputStyle = {
     fontSize: '1rem',
 };
 const sendBtn = {
-    background: '#1dbf73',
+    background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
     color: '#fff',
     border: 'none',
     borderRadius: 8,
@@ -152,9 +165,9 @@ const ChatInbox = () => {
                             No conversations yet. Start chatting by viewing a gig and clicking "Contact Seller" or "Contact Buyer".
                         </p>
                     ) : (
-                        conversations.map((conv, index) => (
+                        conversations.filter(conv => conv.otherUser && conv.otherUser._id && conv.otherUser.username).map((conv, index) => (
                             <div
-                                key={index}
+                                key={conv.otherUser._id || index}
                                 style={conversationItem}
                                 onMouseOver={(e) => e.target.style.background = '#f8f9fa'}
                                 onMouseOut={(e) => e.target.style.background = 'transparent'}
@@ -172,11 +185,11 @@ const ChatInbox = () => {
                                     fontWeight: '600',
                                     marginRight: '1rem'
                                 }}>
-                                    {conv.otherUser.username?.[0]?.toUpperCase() || 'U'}
+                                    {conv.otherUser?.username?.[0]?.toUpperCase() || 'U'}
                                 </div>
                                 <div style={{ flex: 1 }}>
                                     <div style={{ fontWeight: '600', color: '#222' }}>
-                                        {conv.otherUser.username}
+                                        {conv.otherUser?.username || 'Unknown User'}
                                     </div>
                                     <div style={{ color: '#666', fontSize: '0.9rem' }}>
                                         {conv.lastMessage?.content || 'No messages yet'}
@@ -255,8 +268,8 @@ const Chat = () => {
                 if (Array.isArray(data)) {
                     // Find the latest order between these two users
                     const relevant = data.filter(o =>
-                        (o.buyerId._id === user.id && o.sellerId._id === userId) ||
-                        (o.sellerId._id === user.id && o.buyerId._id === userId)
+                        (o.buyerId && o.buyerId._id === user.id && o.sellerId && o.sellerId._id === userId) ||
+                        (o.sellerId && o.sellerId._id === user.id && o.buyerId && o.buyerId._id === userId)
                     );
                     if (relevant.length > 0) {
                         // Sort by createdAt descending
@@ -384,7 +397,7 @@ const Chat = () => {
 
     // Determine roles
     let myRole = 'User', otherRole = 'User';
-    if (order) {
+    if (order && order.buyerId && order.sellerId) {
         if (order.buyerId._id === user.id) {
             myRole = 'Buyer';
             otherRole = 'Seller';

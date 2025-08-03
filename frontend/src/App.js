@@ -21,50 +21,187 @@ import AdminPanel from './pages/AdminPanel';
 import Favorites from './pages/Favorites';
 import FreelancerDashboard from './pages/FreelancerDashboard';
 import ClientDashboard from './pages/ClientDashboard';
+import TestPayment from './pages/TestPayment';
+
+// Updated color scheme - Modern Purple/Blue Theme
+const primaryColor = '#6366f1'; // Indigo
+const secondaryColor = '#8b5cf6'; // Purple
+const accentColor = '#06b6d4'; // Cyan
+const successColor = '#10b981'; // Emerald
+const warningColor = '#f59e0b'; // Amber
+const dangerColor = '#ef4444'; // Red
+const darkColor = '#1e293b'; // Slate
+const lightColor = '#f8fafc'; // Slate light
+const textPrimary = '#1e293b'; // Slate dark
+const textSecondary = '#64748b'; // Slate medium
+const borderColor = '#e2e8f0'; // Slate light border
+
+const headerStyle = {
+    background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
+    color: '#fff',
+    padding: '1rem 2rem',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+    position: 'sticky',
+    top: 0,
+    zIndex: 1000,
+};
+
+const searchContainer = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1rem',
+    maxWidth: 600,
+    margin: '0 auto',
+    background: '#fff',
+    borderRadius: '12px',
+    padding: '0.5rem',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+};
+
+const searchInput = {
+    flex: 1,
+    padding: '0.75rem 1rem',
+    border: 'none',
+    borderRadius: '8px',
+    fontSize: '1rem',
+    outline: 'none',
+    background: '#f8fafc',
+};
+
+const searchBtn = {
+    background: `linear-gradient(135deg, ${accentColor} 0%, ${primaryColor} 100%)`,
+    color: '#fff',
+    border: 'none',
+    borderRadius: '8px',
+    padding: '0.75rem 1.5rem',
+    fontWeight: 600,
+    fontSize: '1rem',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+};
+
+const searchBtnHover = {
+    ...searchBtn,
+    transform: 'translateY(-1px)',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
+};
 
 const cardStyle = {
     background: '#fff',
-    borderRadius: '12px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+    borderRadius: '16px',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
     padding: 0,
-    margin: '1rem 0',
+    width: 320,
+    minWidth: 320,
     maxWidth: 320,
-    minWidth: 260,
-    flex: '1 1 260px',
+    margin: '1rem',
     display: 'flex',
     flexDirection: 'column',
     overflow: 'hidden',
     position: 'relative',
-    height: 440, // Fixed height for all cards
+    transition: 'all 0.3s ease',
+    border: '1px solid #e2e8f0',
+    flex: '0 0 320px',
+};
+
+const cardStyleHover = {
+    ...cardStyle,
+    transform: 'translateY(-4px)',
+    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
 };
 
 const imageStyle = {
     width: '100%',
-    height: 180,
+    height: 200,
     objectFit: 'cover',
-    borderTopLeftRadius: '12px',
-    borderTopRightRadius: '12px',
-    background: '#f5f5f5',
+    borderTopLeftRadius: '16px',
+    borderTopRightRadius: '16px',
+    background: `linear-gradient(135deg, ${lightColor} 0%, #e2e8f0 100%)`,
 };
 
 const sellerRow = {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.7rem',
-    margin: '1rem 0 0.5rem 0',
+    gap: '0.5rem',
+    margin: '0.75rem 0 0.5rem 0',
+    padding: '0 1rem',
 };
 
 const avatar = {
     width: 32,
     height: 32,
     borderRadius: '50%',
-    background: '#f7931e',
+    background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
     color: '#fff',
     fontWeight: 700,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    fontSize: '1rem',
+};
+
+const titleStyle = {
+    color: textPrimary,
+    fontWeight: 600,
     fontSize: '1.1rem',
+    marginBottom: '0.5rem',
+    padding: '0 1rem',
+    lineHeight: 1.3,
+};
+
+const descriptionStyle = {
+    color: textSecondary,
+    fontSize: '0.95rem',
+    marginBottom: '0.75rem',
+    padding: '0 1rem',
+    lineHeight: 1.4,
+    overflow: 'hidden',
+    display: '-webkit-box',
+    WebkitLineClamp: 1,
+    WebkitBoxOrient: 'vertical',
+    maxHeight: '1.4em',
+};
+
+const priceStyle = {
+    color: successColor,
+    fontWeight: 700,
+    fontSize: '1.2rem',
+    marginBottom: '0.5rem',
+    padding: '0 1rem',
+};
+
+const fromStyle = {
+    color: textSecondary,
+    fontSize: '0.95rem',
+    marginRight: 4,
+};
+
+const btnRow = {
+    display: 'flex',
+    gap: '0.5rem',
+    padding: '0 1rem 1rem 1rem',
+    marginTop: 'auto',
+};
+
+const viewBtn = {
+    background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
+    color: '#fff',
+    border: 'none',
+    borderRadius: '8px',
+    padding: '0.75rem 1rem',
+    fontWeight: 600,
+    fontSize: '0.95rem',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    width: '100%',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+};
+
+const viewBtnHover = {
+    ...viewBtn,
+    transform: 'translateY(-1px)',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
 };
 
 const gridStyle = {
@@ -75,147 +212,61 @@ const gridStyle = {
     justifyContent: 'center',
 };
 
-const priceStyle = {
-    color: '#222',
-    fontWeight: 700,
-    fontSize: '1.1rem',
-};
-
-const fromStyle = {
-    color: '#555',
-    fontSize: '0.95rem',
-    marginRight: 4,
-};
-
-const favBtn = {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    background: '#fff',
-    border: 'none',
-    borderRadius: '50%',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-    width: 36,
-    height: 36,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    zIndex: 2,
-};
-
-const viewBtn = {
-    background: '#1dbf73',
-    color: '#fff',
-    padding: '0.6rem 1.2rem',
-    borderRadius: '8px',
-    border: 'none',
-    cursor: 'pointer',
-    fontWeight: 600,
-    fontSize: '0.95rem',
-    width: '100%',
-    textAlign: 'center',
-    transition: 'background-color 0.2s',
-};
-
-const btnRow = {
-    display: 'flex',
-    gap: '0.8rem',
-    marginTop: 'auto', // Push button to bottom
-    paddingTop: '1rem',
-    width: '100%',
-};
-
-const descriptionStyle = {
-    color: '#555',
-    fontSize: '0.98rem',
-    marginBottom: 8,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    display: '-webkit-box',
-    WebkitLineClamp: 1,
-    WebkitBoxOrient: 'vertical',
-    lineHeight: '1.4',
-    maxHeight: '1.4em', // 1 line * 1.4 line height
-};
-
-// Add responsive styles
 const responsiveStyles = `
-    @media (max-width: 1200px) {
-      .gig-grid {
-        gap: 1.5rem;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      }
+  @media (max-width: 1200px) {
+    .gig-grid {
+      gap: 1.5rem;
     }
-    
-    @media (max-width: 768px) {
-      .gig-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        padding: 0 1rem;
-      }
-      
-      .gig-card {
-        max-width: 100%;
-        min-width: auto;
-        height: auto;
-        min-height: 400px;
-      }
-      
-      .container {
-        padding: 1rem;
-      }
-      
-      .header {
-        text-align: center;
-        margin-bottom: 1.5rem;
-      }
-      
-      .header h1 {
-        font-size: 1.8rem;
-        margin-bottom: 0.5rem;
-      }
-      
-      .header p {
-        font-size: 1rem;
-      }
+    .gig-card {
+      width: 300px;
+      min-width: 300px;
+      max-width: 300px;
+      flex: 0 0 300px;
     }
-    
-    @media (max-width: 480px) {
-      .gig-grid {
-        padding: 0 0.5rem;
-        gap: 0.8rem;
-      }
-      
-      .gig-card {
-        min-height: 380px;
-      }
-      
-      .container {
-        padding: 0.5rem;
-      }
-      
-      .header h1 {
-        font-size: 1.5rem;
-      }
-      
-      .header p {
-        font-size: 0.9rem;
-      }
+  }
+  @media (max-width: 768px) {
+    .gig-grid {
+      gap: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    
-    @media (max-width: 360px) {
-      .gig-grid {
-        padding: 0 0.3rem;
-        gap: 0.6rem;
-      }
-      
-      .gig-card {
-        min-height: 360px;
-      }
+    .gig-card {
+      width: 100%;
+      max-width: 400px;
+      min-width: 320px;
+      flex: 0 0 auto;
     }
-  `;
+  }
+  @media (max-width: 480px) {
+    .gig-grid {
+      gap: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .gig-card {
+      width: 100%;
+      max-width: 350px;
+      min-width: 300px;
+      flex: 0 0 auto;
+    }
+  }
+  @media (max-width: 360px) {
+    .gig-grid {
+      gap: 0.6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .gig-card {
+      width: 100%;
+      max-width: 320px;
+      min-width: 280px;
+      flex: 0 0 auto;
+    }
+  }
+`;
 
 const Home = () => {
     const navigate = useNavigate();
@@ -353,9 +404,9 @@ const Home = () => {
                                     <div style={sellerRow}>
                                         <div style={avatar}>{gig.seller?.username?.[0]?.toUpperCase() || 'U'}</div>
                                         <span style={{ color: '#222', fontWeight: 600 }}>{gig.seller?.username || 'Unknown'}</span>
-                                        <span style={{ color: '#888', fontSize: '0.95rem', marginLeft: 'auto' }}>Level 1 ◆◆</span>
+
                                     </div>
-                                    <div style={{ color: '#222', fontWeight: 500, fontSize: '1.08rem', marginBottom: 6 }}>{gig.title}</div>
+                                    <div style={titleStyle}>{gig.title}</div>
                                     <div style={descriptionStyle}>{gig.description}</div>
                                     {gig.tags && gig.tags.length > 0 && (
                                         <div style={{ marginBottom: '0.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
@@ -382,7 +433,7 @@ const Home = () => {
                                             ({gig.reviewCount || 0})
                                         </span>
                                     </div>
-                                    <div style={{ margin: '0.5rem 0', color: '#1dbf73', fontWeight: 500 }}>
+                                    <div style={priceStyle}>
                                         <span style={fromStyle}>from</span>
                                         <span style={priceStyle}>${gig.price}</span>
                                     </div>
@@ -497,6 +548,7 @@ function App() {
                     <Route path="/favorites" element={<ProtectedRoute><ProtectedLayout><Favorites /></ProtectedLayout></ProtectedRoute>} />
                     <Route path="/freelancer-dashboard" element={<ProtectedRoute><ProtectedLayout><FreelancerDashboard /></ProtectedLayout></ProtectedRoute>} />
                     <Route path="/client-dashboard" element={<ProtectedRoute><ProtectedLayout><ClientDashboard /></ProtectedLayout></ProtectedRoute>} />
+                    <Route path="/test-payment" element={<ProtectedRoute><ProtectedLayout><TestPayment /></ProtectedLayout></ProtectedRoute>} />
                 </Routes>
             </Router>
         </AuthProvider>

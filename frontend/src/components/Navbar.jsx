@@ -3,84 +3,94 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { MdSearch, MdNotifications, MdMessage, MdFavoriteBorder, MdFavorite, MdShoppingCart, MdAdd, MdMenu, MdClose } from 'react-icons/md';
 
-const navStyle = {
-    background: '#fff',
-    padding: '0 2rem',
+// Updated color scheme - Modern Purple/Blue Theme
+const primaryColor = '#6366f1'; // Indigo
+const secondaryColor = '#8b5cf6'; // Purple
+const accentColor = '#06b6d4'; // Cyan
+const successColor = '#10b981'; // Emerald
+const warningColor = '#f59e0b'; // Amber
+const dangerColor = '#ef4444'; // Red
+const darkColor = '#1e293b'; // Slate
+const lightColor = '#f8fafc'; // Slate light
+const textPrimary = '#1e293b'; // Slate dark
+const textSecondary = '#64748b'; // Slate medium
+const borderColor = '#e2e8f0'; // Slate light border
+
+const navbarStyle = {
+    background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
+    color: '#fff',
+    padding: '1rem 2rem',
     display: 'flex',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    alignItems: 'center',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
     position: 'sticky',
     top: 0,
     zIndex: 1000,
-    height: '70px'
 };
 
-const searchBar = {
-    flex: 1,
-    maxWidth: '600px',
-    margin: '0 2rem',
-    position: 'relative'
-};
-
-const searchInput = {
-    width: '100%',
-    padding: '0.8rem 1rem 0.8rem 2.5rem',
-    border: '1px solid #ddd',
-    borderRadius: '8px',
-    fontSize: '1rem',
-    outline: 'none'
-};
-
-const searchIcon = {
-    position: 'absolute',
-    left: '0.8rem',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    color: '#666'
-};
-
-const rightActions = {
+const logoStyle = {
+    fontSize: '1.5rem',
+    fontWeight: 700,
+    color: '#fff',
+    textDecoration: 'none',
     display: 'flex',
     alignItems: 'center',
-    gap: '1.5rem'
+    gap: '0.5rem',
+};
+
+const navItems = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1.5rem',
 };
 
 const iconButton = {
-    background: 'none',
+    background: 'rgba(255, 255, 255, 0.1)',
     border: 'none',
-    cursor: 'pointer',
+    borderRadius: '8px',
     padding: '0.5rem',
-    borderRadius: '50%',
+    color: '#fff',
+    cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative'
+    transition: 'all 0.2s ease',
+    position: 'relative',
 };
 
-const avatar = {
-    width: '40px',
-    height: '40px',
+const iconButtonHover = {
+    ...iconButton,
+    background: 'rgba(255, 255, 255, 0.2)',
+    transform: 'translateY(-1px)',
+};
+
+const userSection = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1rem',
+    position: 'relative',
+};
+
+const avatarStyle = {
+    width: '36px',
+    height: '36px',
     borderRadius: '50%',
-    background: '#1dbf73',
+    background: `linear-gradient(135deg, ${accentColor} 0%, ${primaryColor} 100%)`,
     color: '#fff',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontWeight: '600',
+    fontWeight: 600,
     cursor: 'pointer',
-    position: 'relative'
+    border: '2px solid rgba(255, 255, 255, 0.2)',
+    transition: 'all 0.2s ease',
 };
 
-const onlineDot = {
-    position: 'absolute',
-    bottom: '2px',
-    right: '2px',
-    width: '12px',
-    height: '12px',
-    background: '#22c55e',
-    borderRadius: '50%',
-    border: '2px solid #fff'
+const avatarStyleHover = {
+    ...avatarStyle,
+    border: '2px solid rgba(255, 255, 255, 0.4)',
+    transform: 'scale(1.05)',
 };
 
 const dropdownMenu = {
@@ -88,54 +98,54 @@ const dropdownMenu = {
     top: '100%',
     right: 0,
     background: '#fff',
-    border: '1px solid #ddd',
-    borderRadius: '8px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+    borderRadius: '12px',
+    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+    padding: '0.5rem',
     minWidth: '200px',
-    zIndex: 1000,
-    marginTop: '0.5rem',
-    overflow: 'hidden'
+    zIndex: 1001,
+    border: '1px solid #e2e8f0',
+    overflow: 'hidden',
 };
 
 const dropdownButton = {
     width: '100%',
-    padding: '0.8rem 1.2rem',
-    border: 'none',
+    padding: '0.75rem 1rem',
     background: 'transparent',
-    textAlign: 'left',
-    cursor: 'pointer',
+    border: 'none',
+    borderRadius: '8px',
+    color: textPrimary,
     fontSize: '0.95rem',
-    color: '#222',
-    transition: 'background 0.2s',
-    display: 'block'
+    fontWeight: 500,
+    cursor: 'pointer',
+    textAlign: 'left',
+    transition: 'all 0.2s ease',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
 };
 
 const dropdownButtonHover = {
     ...dropdownButton,
-    background: '#f5f5f5'
+    background: '#f8fafc',
+    color: primaryColor,
 };
 
-const createGigBtn = {
-    background: '#1dbf73',
-    color: '#fff',
+const mobileMenuButton = {
+    background: 'rgba(255, 255, 255, 0.1)',
     border: 'none',
-    padding: '0.6rem 1.2rem',
     borderRadius: '8px',
+    padding: '0.5rem',
+    color: '#fff',
     cursor: 'pointer',
-    fontWeight: '600',
-    display: 'flex',
+    display: 'none',
     alignItems: 'center',
-    gap: '0.5rem'
+    justifyContent: 'center',
+    transition: 'all 0.2s ease',
 };
 
-// Mobile styles
-const mobileMenuBtn = {
-    display: 'none',
-    background: 'none',
-    border: 'none',
-    fontSize: '1.5rem',
-    cursor: 'pointer',
-    padding: '0.5rem'
+const mobileMenuButtonHover = {
+    ...mobileMenuButton,
+    background: 'rgba(255, 255, 255, 0.2)',
 };
 
 const sidebar = {
@@ -144,17 +154,18 @@ const sidebar = {
     left: 0,
     width: '280px',
     height: '100vh',
-    background: '#fff',
-    boxShadow: '2px 0 8px rgba(0,0,0,0.1)',
-    zIndex: 2000,
+    background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
+    color: '#fff',
+    padding: '2rem 1.5rem',
+    zIndex: 1002,
     transform: 'translateX(-100%)',
     transition: 'transform 0.3s ease',
-    overflowY: 'auto'
+    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
 };
 
 const sidebarOpen = {
     ...sidebar,
-    transform: 'translateX(0)'
+    transform: 'translateX(0)',
 };
 
 const sidebarOverlay = {
@@ -163,79 +174,75 @@ const sidebarOverlay = {
     left: 0,
     width: '100vw',
     height: '100vh',
-    background: 'rgba(0,0,0,0.5)',
-    zIndex: 1999,
-    display: 'none'
+    background: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 1001,
+    opacity: 0,
+    visibility: 'hidden',
+    transition: 'all 0.3s ease',
 };
 
 const sidebarOverlayOpen = {
     ...sidebarOverlay,
-    display: 'block'
-};
-
-const sidebarHeader = {
-    padding: '1.5rem',
-    borderBottom: '1px solid #eee',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between'
-};
-
-const sidebarContent = {
-    padding: '1rem 0'
+    opacity: 1,
+    visibility: 'visible',
 };
 
 const sidebarItem = {
     display: 'flex',
     alignItems: 'center',
     gap: '1rem',
-    padding: '1rem 1.5rem',
-    cursor: 'pointer',
-    borderBottom: '1px solid #f5f5f5',
-    color: '#333',
-    textDecoration: 'none'
+    padding: '1rem',
+    borderRadius: '8px',
+    color: '#fff',
+    textDecoration: 'none',
+    fontSize: '1rem',
+    fontWeight: 500,
+    transition: 'all 0.2s ease',
+    marginBottom: '0.5rem',
 };
 
 const sidebarItemHover = {
     ...sidebarItem,
-    background: '#f8f9fa'
+    background: 'rgba(255, 255, 255, 0.1)',
+    transform: 'translateX(4px)',
+};
+
+const closeButton = {
+    position: 'absolute',
+    top: '1rem',
+    right: '1rem',
+    background: 'rgba(255, 255, 255, 0.1)',
+    border: 'none',
+    borderRadius: '50%',
+    width: '32px',
+    height: '32px',
+    color: '#fff',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.2s ease',
+};
+
+const closeButtonHover = {
+    ...closeButton,
+    background: 'rgba(255, 255, 255, 0.2)',
+    transform: 'scale(1.1)',
 };
 
 const mobileStyles = `
   @media (max-width: 768px) {
-    .nav-container {
-      padding: 0 1rem;
-      height: 60px;
-    }
-    
-    .search-bar {
+    .nav-items {
       display: none;
     }
-    
-    .right-actions {
-      gap: 0.5rem;
+    .mobile-menu-button {
+      display: flex;
     }
-    
-    .desktop-only {
+    .search-container {
       display: none;
     }
-    
-    .mobile-menu-btn {
-      display: block;
-    }
-    
     .logo {
       font-size: 1.2rem;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .nav-container {
-      padding: 0 0.5rem;
-    }
-    
-    .right-actions {
-      gap: 0.3rem;
     }
   }
 `;
@@ -334,24 +341,24 @@ const Navbar = () => {
     return (
         <>
             <style>{mobileStyles}</style>
-            <nav style={navStyle} className="nav-container">
+            <nav style={navbarStyle} className="nav-container">
                 {/* Mobile Menu Button */}
-                <button style={mobileMenuBtn} onClick={toggleMobileMenu} className="mobile-menu-btn">
+                <button style={mobileMenuButton} onClick={toggleMobileMenu} className="mobile-menu-button">
                     <MdMenu size={24} />
                 </button>
 
                 {/* Logo */}
-                <div style={{ fontWeight: '700', fontSize: '1.5rem', color: '#404145' }} className="logo">
-                    fiverr.
+                <div style={logoStyle} className="logo">
+                    TaskLoft
                 </div>
 
                 {/* Search Bar - Desktop Only */}
-                <div style={searchBar} className="search-bar">
-                    <MdSearch style={searchIcon} size={20} />
+                <div style={{ flex: 1, maxWidth: '600px', margin: '0 2rem', position: 'relative' }} className="search-container">
+                    <MdSearch style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', color: '#fff' }} size={20} />
                     <input
                         type="text"
                         placeholder="Find services"
-                        style={searchInput}
+                        style={{ width: '100%', padding: '0.8rem 1rem 0.8rem 2.5rem', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '8px', fontSize: '1rem', outline: 'none', color: '#fff' }}
                         onKeyPress={(e) => {
                             if (e.key === 'Enter') {
                                 navigate(`/search?q=${e.target.value}`);
@@ -361,15 +368,15 @@ const Navbar = () => {
                 </div>
 
                 {/* Right Actions */}
-                <div style={rightActions} className="right-actions">
+                <div style={navItems} className="nav-items">
                     {user && (
                         <>
                             <button style={iconButton} title="Notifications">
-                                <MdNotifications size={22} color="#404145" />
+                                <MdNotifications size={22} />
                             </button>
 
                             <button style={iconButton} onClick={() => navigate('/chat')} title="Messages">
-                                <MdMessage size={22} color="#404145" />
+                                <MdMessage size={22} />
                                 {unreadMessages > 0 && (
                                     <div style={{
                                         position: 'absolute',
@@ -392,7 +399,7 @@ const Navbar = () => {
                             </button>
 
                             <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => navigate('/favorites')} className="desktop-only">
-                                <MdFavoriteBorder size={22} color="#404145" title="Favorites" />
+                                <MdFavoriteBorder size={22} color="#fff" title="Favorites" />
                                 {favoritesCount > 0 && (
                                     <div style={{
                                         position: 'absolute',
@@ -415,11 +422,29 @@ const Navbar = () => {
                             </div>
 
                             <button style={iconButton} onClick={() => navigate('/orders')} title="Orders">
-                                <MdShoppingCart size={22} color="#404145" />
+                                <MdShoppingCart size={22} />
                             </button>
 
                             {user.role === 'freelancer' && (
-                                <button style={createGigBtn} onClick={() => navigate('/create-gig')} className="desktop-only">
+                                <button style={{
+                                    background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
+                                    color: '#fff',
+                                    border: 'none',
+                                    padding: '0.6rem 1.2rem',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    transition: 'all 0.2s ease',
+                                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                                }}
+                                    className="desktop-only"
+                                    onMouseOver={(e) => { e.target.style.transform = 'translateY(-1px)'; e.target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)'; }}
+                                    onMouseOut={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)'; }}
+                                    onClick={() => navigate('/create-gig')}
+                                >
                                     <MdAdd size={20} />
                                     Create Gig
                                 </button>
@@ -428,9 +453,11 @@ const Navbar = () => {
                     )}
 
                     {/* User Avatar */}
-                    <div style={avatar} ref={avatarRef} onClick={() => setDropdownOpen(!dropdownOpen)}>
-                        {user && user.username ? user.username[0].toUpperCase() : 'A'}
-                        <div style={onlineDot}></div>
+                    <div style={userSection}>
+                        <div style={avatarStyle} ref={avatarRef} onClick={() => setDropdownOpen(!dropdownOpen)}>
+                            {user && user.username ? user.username[0].toUpperCase() : 'A'}
+                            <div style={{ position: 'absolute', bottom: '2px', right: '2px', width: '12px', height: '12px', background: '#22c55e', borderRadius: '50%', border: '2px solid #fff' }}></div>
+                        </div>
 
                         {dropdownOpen && (
                             <div style={dropdownMenu} ref={dropdownRef}>
@@ -448,6 +475,16 @@ const Navbar = () => {
                                 >
                                     Profile
                                 </button>
+                                {user?.role === 'freelancer' && (
+                                    <button
+                                        style={dropdownButton}
+                                        onMouseOver={(e) => e.target.style.background = '#f5f5f5'}
+                                        onMouseOut={(e) => e.target.style.background = 'transparent'}
+                                        onClick={() => { setDropdownOpen(false); navigate('/create-gig'); }}
+                                    >
+                                        Create Gig
+                                    </button>
+                                )}
                                 {user?.role === 'freelancer' && (
                                     <button
                                         style={dropdownButton}
@@ -504,8 +541,8 @@ const Navbar = () => {
             {/* Mobile Sidebar */}
             <div style={mobileMenuOpen ? sidebarOverlayOpen : sidebarOverlay} onClick={closeMobileMenu}></div>
             <div style={mobileMenuOpen ? sidebarOpen : sidebar}>
-                <div style={sidebarHeader}>
-                    <div style={{ fontWeight: '700', fontSize: '1.3rem', color: '#404145' }}>Menu</div>
+                <div style={{ padding: '1.5rem', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ fontWeight: '700', fontSize: '1.3rem', color: '#fff' }}>Menu</div>
                     <button
                         style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}
                         onClick={closeMobileMenu}
@@ -514,7 +551,7 @@ const Navbar = () => {
                     </button>
                 </div>
 
-                <div style={sidebarContent}>
+                <div style={{ padding: '1rem 0' }}>
                     {user ? (
                         <>
                             <div style={sidebarItem} onClick={() => handleSidebarItemClick('/')}>

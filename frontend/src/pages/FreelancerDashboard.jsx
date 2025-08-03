@@ -3,6 +3,19 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { MdStar, MdEdit, MdDelete, MdAdd } from 'react-icons/md';
 
+// Updated color scheme - Modern Purple/Blue Theme
+const primaryColor = '#6366f1'; // Indigo
+const secondaryColor = '#8b5cf6'; // Purple
+const accentColor = '#06b6d4'; // Cyan
+const successColor = '#10b981'; // Emerald
+const warningColor = '#f59e0b'; // Amber
+const dangerColor = '#ef4444'; // Red
+const darkColor = '#1e293b'; // Slate
+const lightColor = '#f8fafc'; // Slate light
+const textPrimary = '#1e293b'; // Slate dark
+const textSecondary = '#64748b'; // Slate medium
+const borderColor = '#e2e8f0'; // Slate light border
+
 const containerStyle = {
     maxWidth: 1200,
     margin: '2.5rem auto',
@@ -11,9 +24,9 @@ const containerStyle = {
 
 const headerStyle = {
     background: '#fff',
-    borderRadius: 16,
-    boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
-    border: '1px solid #eee',
+    borderRadius: 20,
+    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+    border: '1px solid #e2e8f0',
     padding: '2rem',
     marginBottom: '2rem',
 };
@@ -35,21 +48,21 @@ const statCard = {
 const statNumber = {
     fontSize: '2rem',
     fontWeight: 700,
-    color: '#1dbf73',
+    color: primaryColor,
     marginBottom: '0.5rem',
 };
 
 const statLabel = {
-    color: '#666',
+    color: textSecondary,
     fontSize: '0.9rem',
     fontWeight: 500,
 };
 
 const sectionStyle = {
     background: '#fff',
-    borderRadius: 16,
-    boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
-    border: '1px solid #eee',
+    borderRadius: 20,
+    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+    border: '1px solid #e2e8f0',
     padding: '2rem',
     marginBottom: '2rem',
 };
@@ -66,11 +79,11 @@ const sectionHeader = {
 const sectionTitle = {
     fontSize: '1.5rem',
     fontWeight: 700,
-    color: '#222',
+    color: textPrimary,
 };
 
 const addButton = {
-    background: '#1dbf73',
+    background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
     color: '#fff',
     border: 'none',
     borderRadius: 8,
@@ -80,6 +93,8 @@ const addButton = {
     display: 'flex',
     alignItems: 'center',
     gap: '0.5rem',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
 };
 
 const tableStyle = {
@@ -88,11 +103,11 @@ const tableStyle = {
 };
 
 const thStyle = {
-    background: '#f7f7f7',
-    color: '#222',
+    background: lightColor,
+    color: textPrimary,
     fontWeight: 700,
     padding: '0.7rem',
-    borderBottom: '1px solid #eee',
+    borderBottom: `1px solid ${borderColor}`,
     textAlign: 'left',
 };
 

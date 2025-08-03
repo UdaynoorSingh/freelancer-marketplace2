@@ -1,34 +1,53 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
+// Updated color scheme - Modern Purple/Blue Theme
+const primaryColor = '#6366f1'; // Indigo
+const secondaryColor = '#8b5cf6'; // Purple
+const accentColor = '#06b6d4'; // Cyan
+const successColor = '#10b981'; // Emerald
+const warningColor = '#f59e0b'; // Amber
+const dangerColor = '#ef4444'; // Red
+const darkColor = '#1e293b'; // Slate
+const lightColor = '#f8fafc'; // Slate light
+const textPrimary = '#1e293b'; // Slate dark
+const textSecondary = '#64748b'; // Slate medium
+const borderColor = '#e2e8f0'; // Slate light border
+
 const formStyle = {
   background: '#fff',
-  borderRadius: '12px',
-  boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-  padding: '2rem',
+  borderRadius: '20px',
+  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+  padding: '3rem',
   maxWidth: 500,
   margin: '2rem auto',
   display: 'flex',
   flexDirection: 'column',
-  gap: '1rem',
+  gap: '1.5rem',
+  border: '1px solid #e2e8f0',
 };
-const labelStyle = { fontWeight: 600, color: '#222' };
+const labelStyle = { fontWeight: 600, color: textPrimary };
 const inputStyle = {
-  padding: '0.7rem',
-  border: '1px solid #ccc',
-  borderRadius: '6px',
+  padding: '0.75rem 1rem',
+  border: `1px solid ${borderColor}`,
+  borderRadius: '8px',
   fontSize: '1rem',
+  outline: 'none',
+  transition: 'all 0.2s ease',
+  background: '#fff',
 };
 const btnStyle = {
-  background: '#1dbf73',
+  background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
   color: '#fff',
   border: 'none',
-  borderRadius: '6px',
-  padding: '0.8rem',
-  fontWeight: 700,
+  borderRadius: '8px',
+  padding: '0.8rem 1.5rem',
+  fontWeight: 600,
   fontSize: '1.1rem',
   cursor: 'pointer',
   marginTop: '1rem',
+  transition: 'all 0.2s ease',
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
 };
 
 const categories = [
@@ -98,9 +117,9 @@ const CreateGig = () => {
 
   return (
     <form style={formStyle} onSubmit={handleSubmit} encType="multipart/form-data">
-      <h2 style={{ color: '#1dbf73', fontWeight: 700, textAlign: 'center' }}>Create a Gig</h2>
-      {error && <div style={{ color: 'red', fontWeight: 500 }}>{error}</div>}
-      {success && <div style={{ color: '#1dbf73', fontWeight: 500 }}>{success}</div>}
+      <h2 style={{ color: textPrimary, fontWeight: 700, textAlign: 'center', fontSize: '2rem', marginBottom: '1rem' }}>Create a Gig</h2>
+      {error && <div style={{ color: dangerColor, fontWeight: 500, textAlign: 'center', fontSize: '0.9rem' }}>{error}</div>}
+      {success && <div style={{ color: successColor, fontWeight: 500, textAlign: 'center', fontSize: '0.9rem' }}>{success}</div>}
       <label style={labelStyle}>Title</label>
       <input style={inputStyle} name="title" value={form.title} onChange={handleChange} required />
       <label style={labelStyle}>Description</label>

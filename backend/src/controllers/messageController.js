@@ -46,6 +46,12 @@ exports.getConversations = async (req, res) => {
         const conversations = {};
 
         messages.forEach(message => {
+            // Skip messages where sender or receiver is null (deleted users)
+            if (!message.sender || !message.receiver) {
+                console.log('Skipping message with null sender or receiver:', message._id);
+                return;
+            }
+
             const otherUserId = message.sender._id.toString() === req.user.id
                 ? message.receiver._id.toString()
                 : message.sender._id.toString();
@@ -74,7 +80,7 @@ exports.getConversations = async (req, res) => {
             }
 
             // Count unread messages (messages sent to current user that they haven't seen)
-            if (message.receiver._id.toString() === req.user.id) {
+            if (message.receiver && message.receiver._id.toString() === req.user.id) {
                 conversations[otherUserId].unreadCount++;
             }
         });
