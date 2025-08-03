@@ -22,6 +22,10 @@ const messagesRouter = require('./routes/messages');
 app.use('/api/messages', messagesRouter);
 const reviewsRouter = require('./routes/reviews');
 app.use('/api/reviews', reviewsRouter);
+const favoritesRouter = require('./routes/favorites');
+app.use('/api/favorites', favoritesRouter);
+const adminRouter = require('./routes/admin');
+app.use('/api/admin', adminRouter);
 
 // Global error handler
 app.use((err, req, res, next) => {

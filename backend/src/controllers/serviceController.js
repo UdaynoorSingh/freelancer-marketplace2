@@ -44,6 +44,30 @@ exports.searchServices = async (req, res) => {
     }
 };
 
+// ✅ Get user's own gigs (for freelancer dashboard)
+exports.getMyGigs = async (req, res) => {
+    try {
+        const services = await Service.find({ seller: req.user.id })
+            .populate('seller', '_id username email');
+
+        // For each service, fetch reviews and calculate avg rating/count
+        const servicesWithRatings = await Promise.all(services.map(async (service) => {
+            const reviews = await Review.find({ gigId: service._id });
+            const reviewCount = reviews.length;
+            const avgRating = reviewCount > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount) : 0;
+            return {
+                ...service.toObject(),
+                avgRating: avgRating.toFixed(1),
+                reviewCount,
+            };
+        }));
+
+        res.json(servicesWithRatings);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching your gigs', error: err.message });
+    }
+};
+
 // ✅ Get a single service by ID
 exports.getService = async (req, res) => {
     try {

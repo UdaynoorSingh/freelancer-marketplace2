@@ -21,6 +21,9 @@ const upload = multer({ storage });
 // Search services
 router.get('/search', serviceController.searchServices);
 
+// Get user's own gigs (for freelancer dashboard)
+router.get('/my-gigs', serviceController.getMyGigs);
+
 // Get a single service by ID
 router.get('/:id', serviceController.getService);
 

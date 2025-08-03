@@ -1,7 +1,7 @@
 // pages/GigDetails.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { MdStar, MdChevronLeft, MdChevronRight, MdEdit, MdDelete } from 'react-icons/md';
+import { MdStar, MdChevronLeft, MdChevronRight, MdEdit, MdDelete, MdFavoriteBorder, MdFavorite } from 'react-icons/md';
 import { useAuth } from '../contexts/AuthContext';
 import { deleteService, getService } from '../services/serviceApi';
 
@@ -147,6 +147,7 @@ const GigDetails = () => {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [reviewMsg, setReviewMsg] = useState('');
   const [reviewData, setReviewData] = useState({ rating: 5, comment: '' });
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     const fetchGig = async () => {
@@ -176,6 +177,20 @@ const GigDetails = () => {
     }
   }, [gig]);
 
+  // Check if gig is in favorites
+  useEffect(() => {
+    if (gig && gig._id && token) {
+      fetch(`${process.env.REACT_APP_SERVER_URL}/api/favorites/check/${gig._id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(res => res.json())
+        .then(data => setIsFavorite(data.isFavorite))
+        .catch(err => console.error('Error checking favorite status:', err));
+    }
+  }, [gig, token]);
+
   const handlePrev = () => {
     if (!gig?.images?.length) return;
     setIdx(idx > 0 ? idx - 1 : gig.images.length - 1);
@@ -184,6 +199,38 @@ const GigDetails = () => {
   const handleNext = () => {
     if (!gig?.images?.length) return;
     setIdx(idx < gig.images.length - 1 ? idx + 1 : 0);
+  };
+
+  const handleToggleFavorite = async () => {
+    try {
+      if (isFavorite) {
+        // Remove from favorites
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/favorites/remove/${gig._id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (response.ok) {
+          setIsFavorite(false);
+        }
+      } else {
+        // Add to favorites
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/favorites/add`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ serviceId: gig._id })
+        });
+        if (response.ok) {
+          setIsFavorite(true);
+        }
+      }
+    } catch (err) {
+      console.error('Error toggling favorite:', err);
+    }
   };
 
   const handleDelete = async () => {
@@ -251,10 +298,10 @@ const GigDetails = () => {
   if (error) return <div style={{ padding: '2rem', color: 'red' }}>{error}</div>;
   if (!gig) return null;
 
-const reviewCount = reviews.length;
-const avgRating = reviewCount
-  ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount).toFixed(1)
-  : 0;
+  const reviewCount = reviews.length;
+  const avgRating = reviewCount
+    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount).toFixed(1)
+    : 0;
 
 
   const imageURL = gig.images?.[idx]
@@ -278,6 +325,30 @@ const avgRating = reviewCount
           </>
         )}
         <img src={imageURL} alt={gig.title} style={imageStyle} />
+        {!isOwner && (
+          <button
+            style={{
+              position: 'absolute',
+              top: 12,
+              right: 12,
+              background: isFavorite ? '#e53e3e' : '#fff',
+              border: 'none',
+              borderRadius: '50%',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+              width: 36,
+              height: 36,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              zIndex: 2,
+            }}
+            onClick={handleToggleFavorite}
+            title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            {isFavorite ? <MdFavorite size={20} color="#fff" /> : <MdFavoriteBorder size={20} color="#404145" />}
+          </button>
+        )}
       </div>
 
       <div style={{ padding: '0 1.2rem 1.2rem 1.2rem', flex: 1, display: 'flex', flexDirection: 'column' }}>

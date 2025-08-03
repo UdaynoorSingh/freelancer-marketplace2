@@ -43,9 +43,28 @@ const buttonStyle = {
 };
 const errorStyle = { color: '#e53e3e', marginBottom: '1rem', fontWeight: 500 };
 const successStyle = { color: '#38a169', marginBottom: '1rem', fontWeight: 500 };
+const roleContainer = {
+    marginBottom: '1rem',
+};
+const roleLabel = {
+    display: 'block',
+    marginBottom: '0.5rem',
+    fontWeight: '600',
+    color: '#333',
+};
+const roleOptions = {
+    display: 'flex',
+    gap: '1rem',
+};
+const roleOption = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    cursor: 'pointer',
+};
 
 const Register = () => {
-    const [form, setForm] = useState({ username: '', email: '', password: '' });
+    const [form, setForm] = useState({ username: '', email: '', password: '', role: 'client' });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
@@ -105,6 +124,33 @@ const Register = () => {
                     style={inputStyle}
                     required
                 />
+
+                <div style={roleContainer}>
+                    <label style={roleLabel}>I want to:</label>
+                    <div style={roleOptions}>
+                        <label style={roleOption}>
+                            <input
+                                type="radio"
+                                name="role"
+                                value="client"
+                                checked={form.role === 'client'}
+                                onChange={handleChange}
+                            />
+                            Hire for a project
+                        </label>
+                        <label style={roleOption}>
+                            <input
+                                type="radio"
+                                name="role"
+                                value="freelancer"
+                                checked={form.role === 'freelancer'}
+                                onChange={handleChange}
+                            />
+                            Work as a freelancer
+                        </label>
+                    </div>
+                </div>
+
                 <button type="submit" style={buttonStyle} onMouseOver={e => e.target.style.background = '#169c5f'} onMouseOut={e => e.target.style.background = '#1dbf73'}>Register</button>
                 <p style={{ marginTop: '1rem', textAlign: 'center', fontSize: '0.95rem' }}>
                     Already have an account? <a href="/login" style={{ color: '#1dbf73', textDecoration: 'underline' }}>Login</a>

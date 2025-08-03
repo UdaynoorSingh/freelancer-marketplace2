@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { MdStar, MdFavoriteBorder } from 'react-icons/md';
+import { MdStar, MdFavoriteBorder, MdFavorite } from 'react-icons/md';
+import { useAuth } from '../contexts/AuthContext';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -19,7 +20,9 @@ const cardStyle = {
   flexDirection: 'column',
   overflow: 'hidden',
   position: 'relative',
+  height: 440, // Fixed height for all cards
 };
+
 const imageStyle = {
   width: '100%',
   height: 180,
@@ -28,12 +31,14 @@ const imageStyle = {
   borderTopRightRadius: '12px',
   background: '#f5f5f5',
 };
+
 const sellerRow = {
   display: 'flex',
   alignItems: 'center',
   gap: '0.7rem',
   margin: '1rem 0 0.5rem 0',
 };
+
 const avatar = {
   width: 32,
   height: 32,
@@ -46,22 +51,26 @@ const avatar = {
   justifyContent: 'center',
   fontSize: '1.1rem',
 };
+
 const gridStyle = {
   display: 'flex',
   flexWrap: 'wrap',
   gap: '2rem',
   marginTop: '2rem',
 };
+
 const priceStyle = {
   color: '#222',
   fontWeight: 700,
   fontSize: '1.1rem',
 };
+
 const fromStyle = {
   color: '#555',
   fontSize: '0.95rem',
   marginRight: 4,
 };
+
 const favBtn = {
   position: 'absolute',
   top: 12,
@@ -78,6 +87,20 @@ const favBtn = {
   cursor: 'pointer',
   zIndex: 2,
 };
+
+const descriptionStyle = {
+  color: '#555',
+  fontSize: '0.98rem',
+  marginBottom: 8,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  display: '-webkit-box',
+  WebkitLineClamp: 1,
+  WebkitBoxOrient: 'vertical',
+  lineHeight: '1.4',
+  maxHeight: '1.4em', // 1 line * 1.4 line height
+};
+
 const btnRow = {
   display: 'flex',
   gap: '0.8rem',
@@ -104,6 +127,8 @@ const SearchResults = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { token } = useAuth();
+  const [favorites, setFavorites] = useState(new Set());
 
   useEffect(() => {
     if (!search && !category) return;
@@ -133,8 +158,101 @@ const SearchResults = () => {
     }
   }, [search, category]);
 
+  // Fetch user's favorites
+  useEffect(() => {
+    if (token) {
+      fetch(`${process.env.REACT_APP_SERVER_URL}/api/favorites`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            setFavorites(new Set(data.map(fav => fav._id)));
+          }
+        })
+        .catch(err => console.error('Error fetching favorites:', err));
+    }
+  }, [token]);
+
+  const handleToggleFavorite = async (serviceId) => {
+    try {
+      if (favorites.has(serviceId)) {
+        // Remove from favorites
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/favorites/remove/${serviceId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (response.ok) {
+          setFavorites(prev => {
+            const newFavorites = new Set(prev);
+            newFavorites.delete(serviceId);
+            return newFavorites;
+          });
+        }
+      } else {
+        // Add to favorites
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/favorites/add`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ serviceId })
+        });
+        if (response.ok) {
+          setFavorites(prev => new Set([...prev, serviceId]));
+        }
+      }
+    } catch (err) {
+      console.error('Error toggling favorite:', err);
+    }
+  };
+
   return (
     <div style={{ padding: '2rem' }}>
+      <style>{`
+        @media (max-width: 1200px) {
+          .gig-grid {
+            gap: 1.5rem !important;
+          }
+          .gig-card {
+            max-width: 300px !important;
+            min-width: 280px !important;
+            flex: 1 1 280px !important;
+          }
+        }
+        @media (max-width: 768px) {
+          .gig-grid {
+            gap: 1rem !important;
+          }
+          .gig-card {
+            max-width: 280px !important;
+            min-width: 240px !important;
+            flex: 1 1 240px !important;
+            height: 380px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .gig-grid {
+            gap: 0.5rem !important;
+          }
+          .gig-card {
+            max-width: 100% !important;
+            min-width: 100% !important;
+            flex: 1 1 100% !important;
+            height: 360px !important;
+          }
+        }
+        @media (max-width: 360px) {
+          .gig-card {
+            height: 340px !important;
+          }
+        }
+      `}</style>
       <h2 style={{ color: '#1dbf73', fontWeight: 700 }}>
         Results {search && <>for <span style={{ color: '#404145' }}>{search}</span></>}
         {category && <><span style={{ color: '#404145' }}> in </span><span style={{ color: '#1dbf73' }}>{category}</span></>}
@@ -142,39 +260,88 @@ const SearchResults = () => {
       {loading && <p>Loading...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {!loading && !error && results.length === 0 && <p>No results found.</p>}
-      <div style={gridStyle}>
+      <div style={gridStyle} className="gig-grid">
         {results.map(service => {
-          // Use avgRating and reviewCount from backend
-          const avgRating = service.avgRating !== undefined ? service.avgRating : (service.rating || 4.9);
-          const reviewCount = service.reviewCount !== undefined ? service.reviewCount : (service.reviews ? service.reviews.length : 0);
           const images = service.images || [];
+          const isFavorite = favorites.has(service._id);
           return (
-            <div key={service._id} style={cardStyle}>
-              <button style={favBtn}><MdFavoriteBorder size={20} color="#404145" /></button>
+            <div key={service._id} style={cardStyle} className="gig-card">
+              <button
+                style={{
+                  ...favBtn,
+                  background: isFavorite ? '#e53e3e' : '#fff',
+                  color: isFavorite ? '#fff' : '#404145'
+                }}
+                onClick={() => handleToggleFavorite(service._id)}
+                title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+              >
+                {isFavorite ? <MdFavorite size={20} color="#fff" /> : <MdFavoriteBorder size={20} color="#404145" />}
+              </button>
               <img
                 src={images.length > 0 ? `${process.env.REACT_APP_SERVER_URL}/uploads/${images[0]}` : 'https://via.placeholder.com/320x180?text=No+Image'}
                 alt={service.title}
                 style={imageStyle}
               />
-              <div style={{ padding: '0 1.2rem 1.2rem 1.2rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <div style={sellerRow}>
-                  <div style={avatar}>{service.seller?.username ? service.seller.username[0].toUpperCase() : 'U'}</div>
-                  <span style={{ color: '#222', fontWeight: 600 }}>{service.seller?.username || 'Unknown'}</span>
-                  <span style={{ color: '#888', fontSize: '0.95rem', marginLeft: 'auto' }}>Level 1 ◆◆</span>
+              <div style={{ padding: '0 1.2rem 1.2rem 1.2rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={sellerRow}>
+                    <div style={avatar}>{service.seller?.username ? service.seller.username[0].toUpperCase() : 'U'}</div>
+                    <span style={{ color: '#222', fontWeight: 600 }}>{service.seller?.username || 'Unknown'}</span>
+                    <span style={{ color: '#888', fontSize: '0.95rem', marginLeft: 'auto' }}>Level 1 ◆◆</span>
+                  </div>
+                  <div style={{ color: '#222', fontWeight: 500, fontSize: '1.08rem', marginBottom: 6 }}>{service.title}</div>
+                  <div style={descriptionStyle}>{service.description}</div>
+                  {service.tags && service.tags.length > 0 && (
+                    <div style={{ marginBottom: '0.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                      {service.tags.slice(0, 3).map(tag => (
+                        <span key={tag} style={{
+                          fontSize: '0.85rem',
+                          background: '#1dbf73',
+                          color: '#fff',
+                          borderRadius: 6,
+                          padding: '0.2rem 0.5rem',
+                          fontWeight: 500
+                        }}>
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <MdStar color="#f7931e" size={16} />
+                    <span style={{ color: '#222', fontWeight: 600, marginLeft: 4, fontSize: '0.9rem' }}>
+                      {service.avgRating || '0.0'}
+                    </span>
+                    <span style={{ color: '#888', fontSize: '0.85rem', marginLeft: 4 }}>
+                      ({service.reviewCount || 0})
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', marginTop: 8 }}>
+                    <span style={{ marginLeft: 'auto', ...fromStyle }}>From</span>
+                    <span style={priceStyle}>₹{service.price}</span>
+                  </div>
                 </div>
-                <div style={{ color: '#222', fontWeight: 500, fontSize: '1.08rem', marginBottom: 6 }}>{service.title}</div>
-                <div style={{ color: '#555', fontSize: '0.98rem', marginBottom: 8, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{service.description}</div>
-                <div style={{ margin: '0.5rem 0', color: '#1dbf73', fontWeight: 500 }}>
-                  {service.tags && service.tags.map(tag => (
-                    <span key={tag} style={{ marginRight: 8, fontSize: '0.95rem', background: '#f5f5f5', borderRadius: 6, padding: '2px 8px' }}>#{tag}</span>
-                  ))}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', marginTop: 8 }}>
-                  <MdStar color="#f7931e" size={18} />
-                  <span style={{ color: '#222', fontWeight: 600, marginLeft: 4 }}>{avgRating}</span>
-                  <span style={{ color: '#888', fontSize: '0.95rem', marginLeft: 4 }}>({reviewCount})</span>
-                  <span style={{ marginLeft: 'auto', ...fromStyle }}>From</span>
-                  <span style={priceStyle}>₹{service.price}</span>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10, width: '100%' }}>
+                  <button
+                    style={{
+                      background: '#1dbf73',
+                      color: '#fff',
+                      padding: '0.6rem 1.2rem',
+                      borderRadius: 8,
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                      fontSize: '0.95rem',
+                      width: '100%',
+                      textAlign: 'center',
+                      transition: 'background-color 0.2s'
+                    }}
+                    onClick={() => navigate(`/gig/${service._id}`)}
+                    onMouseOver={(e) => e.target.style.background = '#169c5f'}
+                    onMouseOut={(e) => e.target.style.background = '#1dbf73'}
+                  >
+                    View Details
+                  </button>
                 </div>
               </div>
             </div>

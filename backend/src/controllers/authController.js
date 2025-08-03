@@ -4,10 +4,9 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { sendVerificationEmail } = require('../services/emailService');
 
-// Register a new user
 exports.register = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password, role } = req.body;
         // Check if user exists
         const existingUser = await User.findOne({ $or: [{ email }, { username }] });
         if (existingUser) {
@@ -19,17 +18,19 @@ exports.register = async (req, res) => {
         // Generate verification token
         const verificationToken = crypto.randomBytes(32).toString('hex');
         // Create user
-        const user = new User({ username, email, password: hashedPassword, verificationToken });
+        const user = new User({ username, email, password: hashedPassword, role, verificationToken });
         await user.save();
         // Send verification email
         try {
             await sendVerificationEmail(email, verificationToken);
-        } catch (emailErr) {
+        }
+        catch (emailErr) {
             console.error('Email sending error:', emailErr);
             return res.status(500).json({ message: 'Registration failed: could not send verification email', error: emailErr.message });
         }
         res.status(201).json({ message: 'Registration successful! Please check your email to verify your account.' });
-    } catch (err) {
+    }
+    catch (err) {
         console.error('Registration error:', err);
         res.status(500).json({ message: 'Server error', error: err.message });
     }
@@ -71,7 +72,7 @@ exports.login = async (req, res) => {
         }
         // Generate JWT
         const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        res.json({ token, user: { id: user._id, username: user.username, email: user.email } });
+        res.json({ token, user: { id: user._id, username: user.username, email: user.email, role: user.role } });
     } catch (err) {
         console.error('Login error:', err);
         res.status(500).json({ message: 'Server error', error: err.message });

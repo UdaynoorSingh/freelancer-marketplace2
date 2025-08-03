@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
 import Register from './pages/Register';
@@ -12,63 +11,16 @@ import EditGig from './pages/EditGig';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useEffect, useState } from 'react';
-import { MdStar, MdFavoriteBorder } from 'react-icons/md';
+import { MdStar, MdFavoriteBorder, MdFavorite } from 'react-icons/md';
 import GigDetails from './pages/GigDetails';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Orders from './pages/Orders';
 import Chat from './pages/Chat';
 import AdminPanel from './pages/AdminPanel';
-
-
-const homeContainer = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg, #1dbf73 0%, #f7f7f7 100%)',
-};
-const titleStyle = {
-    fontSize: '2.5rem',
-    fontWeight: 800,
-    color: '#1dbf73',
-    marginBottom: '2rem',
-    textAlign: 'center',
-};
-const buttonRow = {
-    display: 'flex',
-    gap: '1.5rem',
-    marginBottom: '2rem',
-};
-const buttonStyle = {
-    padding: '0.75rem 2.5rem',
-    fontSize: '1.1rem',
-    fontWeight: 600,
-    borderRadius: '8px',
-    border: 'none',
-    cursor: 'pointer',
-    transition: 'background 0.2s, color 0.2s',
-    textDecoration: 'none',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-};
-const registerBtn = {
-    ...buttonStyle,
-    background: '#1dbf73',
-    color: '#fff',
-};
-const loginBtn = {
-    ...buttonStyle,
-    background: '#fff',
-    color: '#1dbf73',
-    border: '2px solid #1dbf73',
-};
-const logoutBtn = {
-    ...buttonStyle,
-    background: '#e53e3e',
-    color: '#fff',
-    marginTop: '1rem',
-};
+import Favorites from './pages/Favorites';
+import FreelancerDashboard from './pages/FreelancerDashboard';
+import ClientDashboard from './pages/ClientDashboard';
 
 const cardStyle = {
     background: '#fff',
@@ -83,7 +35,9 @@ const cardStyle = {
     flexDirection: 'column',
     overflow: 'hidden',
     position: 'relative',
+    height: 440, // Fixed height for all cards
 };
+
 const imageStyle = {
     width: '100%',
     height: 180,
@@ -92,12 +46,14 @@ const imageStyle = {
     borderTopRightRadius: '12px',
     background: '#f5f5f5',
 };
+
 const sellerRow = {
     display: 'flex',
     alignItems: 'center',
     gap: '0.7rem',
     margin: '1rem 0 0.5rem 0',
 };
+
 const avatar = {
     width: 32,
     height: 32,
@@ -110,22 +66,27 @@ const avatar = {
     justifyContent: 'center',
     fontSize: '1.1rem',
 };
+
 const gridStyle = {
     display: 'flex',
     flexWrap: 'wrap',
     gap: '2rem',
     marginTop: '2rem',
+    justifyContent: 'center',
 };
+
 const priceStyle = {
     color: '#222',
     fontWeight: 700,
     fontSize: '1.1rem',
 };
+
 const fromStyle = {
     color: '#555',
     fontSize: '0.95rem',
     marginRight: 4,
 };
+
 const favBtn = {
     position: 'absolute',
     top: 12,
@@ -143,11 +104,96 @@ const favBtn = {
     zIndex: 2,
 };
 
+const viewBtn = {
+    background: '#1dbf73',
+    color: '#fff',
+    padding: '0.6rem 1.2rem',
+    borderRadius: '8px',
+    border: 'none',
+    cursor: 'pointer',
+    fontWeight: 600,
+    fontSize: '0.95rem',
+    width: '100%',
+    textAlign: 'center',
+    transition: 'background-color 0.2s',
+};
+
+const btnRow = {
+    display: 'flex',
+    gap: '0.8rem',
+    marginTop: 'auto', // Push button to bottom
+    paddingTop: '1rem',
+    width: '100%',
+};
+
+const descriptionStyle = {
+    color: '#555',
+    fontSize: '0.98rem',
+    marginBottom: 8,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    WebkitLineClamp: 1,
+    WebkitBoxOrient: 'vertical',
+    lineHeight: '1.4',
+    maxHeight: '1.4em', // 1 line * 1.4 line height
+};
+
+// Add responsive styles
+const responsiveStyles = `
+    @media (max-width: 1200px) {
+        .gig-grid {
+            gap: 1.5rem !important;
+        }
+        .gig-card {
+            max-width: 300px !important;
+            min-width: 280px !important;
+            flex: 1 1 280px !important;
+        }
+    }
+    @media (max-width: 768px) {
+        .gig-grid {
+            gap: 1rem !important;
+            margin-top: 1rem !important;
+        }
+        .gig-card {
+            max-width: 280px !important;
+            min-width: 240px !important;
+            flex: 1 1 240px !important;
+            height: 380px !important;
+        }
+        .container {
+            padding: 1rem !important;
+        }
+    }
+    @media (max-width: 480px) {
+        .gig-grid {
+            gap: 0.5rem !important;
+        }
+        .gig-card {
+            max-width: 100% !important;
+            min-width: 100% !important;
+            flex: 1 1 100% !important;
+            height: 360px !important;
+        }
+        .container {
+            padding: 0.5rem !important;
+        }
+    }
+    @media (max-width: 360px) {
+        .gig-card {
+            height: 340px !important;
+        }
+    }
+`;
+
 const Home = () => {
     const navigate = useNavigate();
+    const { token } = useAuth();
     const [gigs, setGigs] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [favorites, setFavorites] = useState(new Set());
 
     useEffect(() => {
         setLoading(true);
@@ -168,61 +214,164 @@ const Home = () => {
             });
     }, []);
 
+    // Fetch user's favorites
+    useEffect(() => {
+        if (token) {
+            fetch(`${process.env.REACT_APP_SERVER_URL}/api/favorites`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (Array.isArray(data)) {
+                        setFavorites(new Set(data.map(fav => fav._id)));
+                    }
+                })
+                .catch(err => console.error('Error fetching favorites:', err));
+        }
+    }, [token]);
+
+    const handleToggleFavorite = async (serviceId) => {
+        try {
+            if (favorites.has(serviceId)) {
+                // Remove from favorites
+                const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/favorites/remove/${serviceId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (response.ok) {
+                    setFavorites(prev => {
+                        const newFavorites = new Set(prev);
+                        newFavorites.delete(serviceId);
+                        return newFavorites;
+                    });
+                    // Trigger navbar favorites count update
+                    window.dispatchEvent(new CustomEvent('favoritesUpdated'));
+                }
+            } else {
+                // Add to favorites
+                const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/favorites/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ serviceId })
+                });
+                if (response.ok) {
+                    setFavorites(prev => new Set([...prev, serviceId]));
+                    // Trigger navbar favorites count update
+                    window.dispatchEvent(new CustomEvent('favoritesUpdated'));
+                }
+            }
+        } catch (err) {
+            console.error('Error toggling favorite:', err);
+        }
+    };
+
     return (
-        <div style={{ padding: '2rem' }}>
-            {loading && <p>Loading...</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {!loading && !error && gigs.length === 0 && <p>No gigs found.</p>}
-            <div style={gridStyle}>
-                {gigs.map(service => {
-                  const avgRating = service.avgRating || "0.0";
-                  const reviewCount = service.reviewCount || 0;
-
-                    return (
-                        <div key={service._id} style={cardStyle}>
-                            <button style={favBtn}><MdFavoriteBorder size={20} color="#404145" /></button>
-                            <img
-                                src={
-                                    service.images && service.images.length > 0
-                                        ? `${process.env.REACT_APP_SERVER_URL}/uploads/${service.images[0]}`
-                                        : 'https://via.placeholder.com/320x180?text=No+Image'
-                                }
-                                alt={service.title}
-                                style={imageStyle}
-                            />
-                            <div style={{ padding: '0 1.2rem 1.2rem 1.2rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                                <div style={sellerRow}>
-                                    <div style={avatar}>{service.seller?.username ? service.seller.username[0].toUpperCase() : 'U'}</div>
-                                    <span style={{ color: '#222', fontWeight: 600 }}>{service.seller?.username || 'Unknown'}</span>
-                                    <span style={{ color: '#888', fontSize: '0.95rem', marginLeft: 'auto' }}>Level 1 ◆◆</span>
-                                </div>
-                                <div style={{ color: '#222', fontWeight: 500, fontSize: '1.08rem', marginBottom: 6 }}>{service.title}</div>
-                                <div style={{ color: '#555', fontSize: '0.98rem', marginBottom: 8, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{service.description}</div>
-                                <div style={{ margin: '0.5rem 0', color: '#1dbf73', fontWeight: 500 }}>
-                                    {service.tags && service.tags.map(tag => (
-                                        <span key={tag} style={{ marginRight: 8, fontSize: '0.95rem', background: '#f5f5f5', borderRadius: 6, padding: '2px 8px' }}>#{tag}</span>
-                                    ))}
-                                </div>
-                                <div style={{ display: 'flex', alignItems: 'center', marginTop: 8 }}>
-                                    <MdStar color="#f7931e" size={18} />
-                                    <span style={{ color: '#222', fontWeight: 600, marginLeft: 4 }}>{avgRating}</span>
-                                    <span style={{ color: '#888', fontSize: '0.95rem', marginLeft: 4 }}>({reviewCount})</span>
-                                    <span style={{ marginLeft: 'auto', ...fromStyle }}>From</span>
-                                    <span style={priceStyle}>₹{service.price}</span>
-
-                                </div>
-                                <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
+        <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }} className="container">
+            <style>{responsiveStyles}</style>
+            {loading ? (
+                <div style={{ textAlign: 'center', padding: '2rem', fontSize: '1.2rem', color: '#666' }}>Loading...</div>
+            ) : error ? (
+                <div style={{ textAlign: 'center', padding: '2rem', color: '#e53e3e', fontSize: '1.1rem' }}>{error}</div>
+            ) : (
+                <div style={gridStyle} className="gig-grid">
+                    {gigs.map((gig) => (
+                        <div key={gig._id} style={cardStyle} className="gig-card">
+                            <div style={{ position: 'relative' }}>
+                                <img
+                                    src={
+                                        gig.images && gig.images.length > 0
+                                            ? `${process.env.REACT_APP_SERVER_URL}/uploads/${gig.images[0]}`
+                                            : 'https://via.placeholder.com/300x200?text=No+Image'
+                                    }
+                                    alt={gig.title}
+                                    style={imageStyle}
+                                />
+                                {token && (
                                     <button
-                                        style={{ background: '#1dbf73', color: '#fff', padding: '0.6rem 1.2rem', borderRadius: 8, border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '0.95rem' }}
-                                        onClick={() => navigate(`/gig/${service._id}`)}>
-                                        View
+                                        style={{
+                                            position: 'absolute',
+                                            top: 12,
+                                            right: 12,
+                                            background: favorites.has(gig._id) ? '#e53e3e' : '#fff',
+                                            border: 'none',
+                                            borderRadius: '50%',
+                                            boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                                            width: 36,
+                                            height: 36,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            cursor: 'pointer',
+                                            zIndex: 2,
+                                        }}
+                                        onClick={() => handleToggleFavorite(gig._id)}
+                                        title={favorites.has(gig._id) ? 'Remove from favorites' : 'Add to favorites'}
+                                    >
+                                        {favorites.has(gig._id) ? <MdFavorite size={20} color="#fff" /> : <MdFavoriteBorder size={20} color="#404145" />}
+                                    </button>
+                                )}
+                            </div>
+                            <div style={{ padding: '0 1.2rem 1.2rem 1.2rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                <div>
+                                    <div style={sellerRow}>
+                                        <div style={avatar}>{gig.seller?.username?.[0]?.toUpperCase() || 'U'}</div>
+                                        <span style={{ color: '#222', fontWeight: 600 }}>{gig.seller?.username || 'Unknown'}</span>
+                                        <span style={{ color: '#888', fontSize: '0.95rem', marginLeft: 'auto' }}>Level 1 ◆◆</span>
+                                    </div>
+                                    <div style={{ color: '#222', fontWeight: 500, fontSize: '1.08rem', marginBottom: 6 }}>{gig.title}</div>
+                                    <div style={descriptionStyle}>{gig.description}</div>
+                                    {gig.tags && gig.tags.length > 0 && (
+                                        <div style={{ marginBottom: '0.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                                            {gig.tags.slice(0, 3).map(tag => (
+                                                <span key={tag} style={{
+                                                    fontSize: '0.85rem',
+                                                    background: '#1dbf73',
+                                                    color: '#fff',
+                                                    borderRadius: 6,
+                                                    padding: '0.2rem 0.5rem',
+                                                    fontWeight: 500
+                                                }}>
+                                                    #{tag}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                                        <MdStar color="#f7931e" size={16} />
+                                        <span style={{ color: '#222', fontWeight: 600, marginLeft: 4, fontSize: '0.9rem' }}>
+                                            {gig.avgRating || '0.0'}
+                                        </span>
+                                        <span style={{ color: '#888', fontSize: '0.85rem', marginLeft: 4 }}>
+                                            ({gig.reviewCount || 0})
+                                        </span>
+                                    </div>
+                                    <div style={{ margin: '0.5rem 0', color: '#1dbf73', fontWeight: 500 }}>
+                                        <span style={fromStyle}>from</span>
+                                        <span style={priceStyle}>${gig.price}</span>
+                                    </div>
+                                </div>
+                                <div style={btnRow}>
+                                    <button
+                                        style={viewBtn}
+                                        onClick={() => navigate(`/gig/${gig._id}`)}
+                                        onMouseOver={(e) => e.target.style.background = '#169c5f'}
+                                        onMouseOut={(e) => e.target.style.background = '#1dbf73'}
+                                    >
+                                        View Details
                                     </button>
                                 </div>
                             </div>
                         </div>
-                    );
-                })}
-            </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
@@ -314,6 +463,9 @@ function App() {
                     <Route path="/orders" element={<ProtectedRoute><ProtectedLayout><Orders /></ProtectedLayout></ProtectedRoute>} />
                     <Route path="/chat/:userId" element={<ProtectedRoute><ProtectedLayout><Chat /></ProtectedLayout></ProtectedRoute>} />
                     <Route path="/admin" element={<ProtectedRoute><ProtectedLayout><AdminPanel /></ProtectedLayout></ProtectedRoute>} />
+                    <Route path="/favorites" element={<ProtectedRoute><ProtectedLayout><Favorites /></ProtectedLayout></ProtectedRoute>} />
+                    <Route path="/freelancer-dashboard" element={<ProtectedRoute><ProtectedLayout><FreelancerDashboard /></ProtectedLayout></ProtectedRoute>} />
+                    <Route path="/client-dashboard" element={<ProtectedRoute><ProtectedLayout><ClientDashboard /></ProtectedLayout></ProtectedRoute>} />
                 </Routes>
             </Router>
         </AuthProvider>
