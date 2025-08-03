@@ -212,46 +212,87 @@ const SearchResults = () => {
     }
   };
 
+  const responsiveStyles = `
+    @media (max-width: 1200px) {
+      .gig-grid {
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .gig-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0 1rem;
+      }
+      
+      .gig-card {
+        max-width: 100%;
+        min-width: auto;
+        height: auto;
+        min-height: 400px;
+      }
+      
+      .container {
+        padding: 1rem;
+      }
+      
+      .header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+      
+      .header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .header p {
+        font-size: 1rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .gig-grid {
+        padding: 0 0.5rem;
+        gap: 0.8rem;
+      }
+      
+      .gig-card {
+        min-height: 380px;
+      }
+      
+      .container {
+        padding: 0.5rem;
+      }
+      
+      .header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .header p {
+        font-size: 0.9rem;
+      }
+    }
+    
+    @media (max-width: 360px) {
+      .gig-grid {
+        padding: 0 0.3rem;
+        gap: 0.6rem;
+      }
+      
+      .gig-card {
+        min-height: 360px;
+      }
+    }
+  `;
+
   return (
     <div style={{ padding: '2rem' }}>
       <style>{`
-        @media (max-width: 1200px) {
-          .gig-grid {
-            gap: 1.5rem !important;
-          }
-          .gig-card {
-            max-width: 300px !important;
-            min-width: 280px !important;
-            flex: 1 1 280px !important;
-          }
-        }
-        @media (max-width: 768px) {
-          .gig-grid {
-            gap: 1rem !important;
-          }
-          .gig-card {
-            max-width: 280px !important;
-            min-width: 240px !important;
-            flex: 1 1 240px !important;
-            height: 380px !important;
-          }
-        }
-        @media (max-width: 480px) {
-          .gig-grid {
-            gap: 0.5rem !important;
-          }
-          .gig-card {
-            max-width: 100% !important;
-            min-width: 100% !important;
-            flex: 1 1 100% !important;
-            height: 360px !important;
-          }
-        }
-        @media (max-width: 360px) {
-          .gig-card {
-            height: 340px !important;
-          }
-        }
+        ${responsiveStyles}
       `}</style>
       <h2 style={{ color: '#1dbf73', fontWeight: 700 }}>
         Results {search && <>for <span style={{ color: '#404145' }}>{search}</span></>}

@@ -1,113 +1,86 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { MdSearch, MdNotificationsNone, MdMailOutline, MdFavoriteBorder } from 'react-icons/md';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { io } from 'socket.io-client';
+import { useNavigate } from 'react-router-dom';
+import { MdSearch, MdNotifications, MdMessage, MdFavoriteBorder, MdFavorite, MdShoppingCart, MdAdd, MdMenu, MdClose } from 'react-icons/md';
 
 const navStyle = {
+    background: '#fff',
+    padding: '0 2rem',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '1rem 2rem',
-    background: '#fff',
-    borderBottom: '1px solid #e4e5e7',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
     position: 'sticky',
     top: 0,
-    zIndex: 100,
-    flexWrap: 'wrap',
-    gap: '1rem',
-};
-
-const logoStyle = {
-    fontWeight: 900,
-    fontSize: '2rem',
-    color: '#1dbf73',
-    letterSpacing: '-2px',
-    textDecoration: 'none',
-    flexShrink: 0,
+    zIndex: 1000,
+    height: '70px'
 };
 
 const searchBar = {
-    display: 'flex',
-    alignItems: 'center',
-    background: '#f5f5f5',
-    borderRadius: '24px',
-    padding: '0.25rem 1rem',
-    flex: '1 1 300px',
-    maxWidth: '500px',
-    margin: '0 1rem',
-    minWidth: '200px',
+    flex: 1,
+    maxWidth: '600px',
+    margin: '0 2rem',
+    position: 'relative'
 };
 
 const searchInput = {
-    border: 'none',
-    background: 'transparent',
-    outline: 'none',
+    width: '100%',
+    padding: '0.8rem 1rem 0.8rem 2.5rem',
+    border: '1px solid #ddd',
+    borderRadius: '8px',
     fontSize: '1rem',
-    flex: 1,
-    padding: '0.5rem 0',
-    minWidth: '100px',
+    outline: 'none'
 };
 
-const searchBtn = {
-    background: '#222',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '0 20px 20px 0',
-    padding: '0.5rem 1.2rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-    marginLeft: '0',
-    height: '40px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+const searchIcon = {
+    position: 'absolute',
+    left: '0.8rem',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    color: '#666'
 };
 
 const rightActions = {
     display: 'flex',
     alignItems: 'center',
-    gap: '1.2rem',
-    flexWrap: 'wrap',
+    gap: '1.5rem'
 };
 
-const createBtn = {
-    background: '#1dbf73',
-    color: '#fff',
+const iconButton = {
+    background: 'none',
     border: 'none',
-    borderRadius: '8px',
-    padding: '0.5rem 1.2rem',
-    fontWeight: 600,
-    fontSize: '1rem',
     cursor: 'pointer',
-    marginLeft: '1rem',
-    whiteSpace: 'nowrap',
-};
-
-const avatar = {
-    width: '32px',
-    height: '32px',
+    padding: '0.5rem',
     borderRadius: '50%',
-    background: '#f7931e',
-    color: '#fff',
-    fontWeight: 700,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative'
+};
+
+const avatar = {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    background: '#1dbf73',
+    color: '#fff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: '600',
     cursor: 'pointer',
-    position: 'relative',
-    flexShrink: 0,
+    position: 'relative'
 };
 
 const onlineDot = {
     position: 'absolute',
     bottom: '2px',
     right: '2px',
-    width: '8px',
-    height: '8px',
-    background: '#1dbf73',
+    width: '12px',
+    height: '12px',
+    background: '#22c55e',
     borderRadius: '50%',
-    border: '2px solid #fff',
+    border: '2px solid #fff'
 };
 
 const dropdownMenu = {
@@ -115,15 +88,16 @@ const dropdownMenu = {
     top: '100%',
     right: 0,
     background: '#fff',
-    border: '1px solid #eee',
+    border: '1px solid #ddd',
     borderRadius: '8px',
-    boxShadow: '0 4px 16px rgba(0,0,0,0.10)',
-    minWidth: '180px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+    minWidth: '200px',
     zIndex: 1000,
     marginTop: '0.5rem',
+    overflow: 'hidden'
 };
 
-const dropdownItem = {
+const dropdownButton = {
     width: '100%',
     padding: '0.8rem 1.2rem',
     border: 'none',
@@ -133,154 +107,163 @@ const dropdownItem = {
     fontSize: '0.95rem',
     color: '#222',
     transition: 'background 0.2s',
+    display: 'block'
 };
 
-const dropdownItemHover = {
-    ...dropdownItem,
-    background: '#f5f5f5',
+const dropdownButtonHover = {
+    ...dropdownButton,
+    background: '#f5f5f5'
 };
 
-const notificationDot = {
-    position: 'absolute',
-    top: '-4px',
-    right: '-4px',
-    background: '#e53e3e',
+const createGigBtn = {
+    background: '#1dbf73',
     color: '#fff',
-    borderRadius: '50%',
-    width: '18px',
-    height: '18px',
-    fontSize: '0.75rem',
+    border: 'none',
+    padding: '0.6rem 1.2rem',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontWeight: '600',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
-    fontWeight: 700,
+    gap: '0.5rem'
 };
 
+// Mobile styles
 const mobileMenuBtn = {
     display: 'none',
     background: 'none',
     border: 'none',
     fontSize: '1.5rem',
     cursor: 'pointer',
-    color: '#404145',
-    padding: '0.5rem',
+    padding: '0.5rem'
 };
 
-const mobileMenu = {
-    display: 'none',
-    width: '100%',
+const sidebar = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '280px',
+    height: '100vh',
     background: '#fff',
-    borderTop: '1px solid #eee',
-    padding: '1rem',
-    flexDirection: 'column',
-    gap: '1rem',
+    boxShadow: '2px 0 8px rgba(0,0,0,0.1)',
+    zIndex: 2000,
+    transform: 'translateX(-100%)',
+    transition: 'transform 0.3s ease',
+    overflowY: 'auto'
 };
 
-// Media query styles
+const sidebarOpen = {
+    ...sidebar,
+    transform: 'translateX(0)'
+};
+
+const sidebarOverlay = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    background: 'rgba(0,0,0,0.5)',
+    zIndex: 1999,
+    display: 'none'
+};
+
+const sidebarOverlayOpen = {
+    ...sidebarOverlay,
+    display: 'block'
+};
+
+const sidebarHeader = {
+    padding: '1.5rem',
+    borderBottom: '1px solid #eee',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+};
+
+const sidebarContent = {
+    padding: '1rem 0'
+};
+
+const sidebarItem = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1rem',
+    padding: '1rem 1.5rem',
+    cursor: 'pointer',
+    borderBottom: '1px solid #f5f5f5',
+    color: '#333',
+    textDecoration: 'none'
+};
+
+const sidebarItemHover = {
+    ...sidebarItem,
+    background: '#f8f9fa'
+};
+
 const mobileStyles = `
-    @media (max-width: 768px) {
-        .nav-container {
-            flex-direction: column;
-            align-items: stretch;
-            padding: 1rem;
-        }
-        .search-container {
-            order: 3;
-            margin: 1rem 0;
-            max-width: none;
-        }
-        .right-actions {
-            justify-content: space-between;
-            gap: 0.5rem;
-        }
-        .mobile-menu-btn {
-            display: block !important;
-        }
-        .mobile-menu {
-            display: flex !important;
-        }
-        .desktop-only {
-            display: none !important;
-        }
+  @media (max-width: 768px) {
+    .nav-container {
+      padding: 0 1rem;
+      height: 60px;
     }
-    @media (max-width: 480px) {
-        .right-actions {
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-        .create-btn {
-            margin-left: 0;
-            width: 100%;
-            margin-top: 0.5rem;
-        }
+    
+    .search-bar {
+      display: none;
     }
+    
+    .right-actions {
+      gap: 0.5rem;
+    }
+    
+    .desktop-only {
+      display: none;
+    }
+    
+    .mobile-menu-btn {
+      display: block;
+    }
+    
+    .logo {
+      font-size: 1.2rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .nav-container {
+      padding: 0 0.5rem;
+    }
+    
+    .right-actions {
+      gap: 0.3rem;
+    }
+  }
 `;
 
-const socket = io(process.env.REACT_APP_SERVER_URL, {
-    transports: ['websocket'],
-    withCredentials: true,
-});
-
-const REACT_APP_ADMIN_EMAIL = process.env.REACT_APP_ADMIN_EMAIL;
-
 const Navbar = () => {
-    const [search, setSearch] = useState('');
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [hovered, setHovered] = useState(null);
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const avatarRef = useRef();
-    const dropdownRef = useRef();
+    const { user, token, logout } = useAuth();
     const navigate = useNavigate();
-    const { logout, user, token } = useAuth();
-    const [notifications, setNotifications] = useState([]);
-    const [notifOpen, setNotifOpen] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [favoritesCount, setFavoritesCount] = useState(0);
+    const dropdownRef = useRef();
+    const avatarRef = useRef();
 
-    const handleSearch = (e) => {
-        e.preventDefault();
-        if (search.trim()) {
-            navigate(`/search?query=${encodeURIComponent(search.trim())}`);
-            setSearch('');
-        }
-    };
-
-    // Close dropdown on outside click
     useEffect(() => {
-        function handleClickOutside(event) {
-            if (
-                dropdownOpen &&
-                dropdownRef.current &&
-                !dropdownRef.current.contains(event.target) &&
-                avatarRef.current &&
-                !avatarRef.current.contains(event.target)
-            ) {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target) &&
+                avatarRef.current && !avatarRef.current.contains(event.target)) {
                 setDropdownOpen(false);
             }
-        }
+        };
+
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [dropdownOpen]);
+    }, []);
 
-    useEffect(() => {
-        if (!user) return;
-        socket.emit('join', user.id);
-        socket.on('chat:receive', (msg) => {
-            // Only notify if not already chatting with sender
-            if (window.location.pathname !== `/chat/${msg.sender}`) {
-                setNotifications((prev) => [
-                    { sender: msg.sender, content: msg.content, timestamp: msg.timestamp },
-                    ...prev,
-                ]);
-            }
-        });
-        return () => {
-            socket.off('chat:receive');
-        };
-    }, [user]);
-
-    // Fetch favorites count
     useEffect(() => {
         if (!user || !token) return;
+
         fetch(`${process.env.REACT_APP_SERVER_URL}/api/favorites`, {
             headers: { Authorization: `Bearer ${token}` }
         })
@@ -293,7 +276,6 @@ const Navbar = () => {
             .catch(err => console.error('Error fetching favorites count:', err));
     }, [user, token]);
 
-    // Listen for favorites updates
     useEffect(() => {
         const handleFavoritesUpdate = () => {
             if (!user || !token) return;
@@ -314,94 +296,105 @@ const Navbar = () => {
     }, [user, token]);
 
     const handleLogout = () => {
-        setDropdownOpen(false);
-        setMobileMenuOpen(false);
         logout();
         navigate('/login');
-    };
-
-    const handleNotifClick = () => {
-        setNotifOpen((open) => !open);
-    };
-    const handleNotifSelect = (sender) => {
-        setNotifOpen(false);
-        setNotifications((prev) => prev.filter((n) => n.sender !== sender));
-        navigate(`/chat/${sender}`);
     };
 
     const toggleMobileMenu = () => {
         setMobileMenuOpen(!mobileMenuOpen);
     };
 
+    const closeMobileMenu = () => {
+        setMobileMenuOpen(false);
+    };
+
+    const handleSidebarItemClick = (path) => {
+        navigate(path);
+        closeMobileMenu();
+    };
+
     return (
         <>
             <style>{mobileStyles}</style>
             <nav style={navStyle} className="nav-container">
-                <Link to="/" style={logoStyle}>fiverr<span style={{ color: '#404145', fontWeight: 400 }}>.</span></Link>
+                {/* Mobile Menu Button */}
+                <button style={mobileMenuBtn} onClick={toggleMobileMenu} className="mobile-menu-btn">
+                    <MdMenu size={24} />
+                </button>
 
-                <form style={searchBar} onSubmit={handleSearch} className="search-container">
+                {/* Logo */}
+                <div style={{ fontWeight: '700', fontSize: '1.5rem', color: '#404145' }} className="logo">
+                    fiverr.
+                </div>
+
+                {/* Search Bar - Desktop Only */}
+                <div style={searchBar} className="search-bar">
+                    <MdSearch style={searchIcon} size={20} />
                     <input
                         type="text"
-                        placeholder="web dev"
+                        placeholder="Find services"
                         style={searchInput}
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                                navigate(`/search?q=${e.target.value}`);
+                            }
+                        }}
                     />
-                    <button type="submit" style={searchBtn}><MdSearch size={22} /></button>
-                </form>
+                </div>
 
+                {/* Right Actions */}
                 <div style={rightActions} className="right-actions">
-                    <div style={{ position: 'relative' }} className="desktop-only">
-                        <MdNotificationsNone size={22} color="#404145" style={{ cursor: 'pointer' }} title="Notifications" onClick={handleNotifClick} />
-                        {notifications.length > 0 && (
-                            <div style={notificationDot}>{notifications.length}</div>
-                        )}
-                        {notifOpen && notifications.length > 0 && (
-                            <div style={{ position: 'absolute', top: 28, right: 0, background: '#fff', border: '1px solid #eee', borderRadius: 10, boxShadow: '0 4px 16px rgba(0,0,0,0.10)', minWidth: 260, zIndex: 999 }}>
-                                {notifications.map((n, i) => (
-                                    <div key={i} style={{ padding: '0.8rem 1.2rem', borderBottom: '1px solid #f5f5f5', cursor: 'pointer', color: '#222' }} onClick={() => handleNotifSelect(n.sender)}>
-                                        <b>New message</b>: {n.content.length > 32 ? n.content.slice(0, 32) + '...' : n.content}
-                                        <div style={{ color: '#888', fontSize: '0.92rem', marginTop: 2 }}>{new Date(n.timestamp).toLocaleTimeString()}</div>
+                    {user && (
+                        <>
+                            <button style={iconButton} title="Notifications">
+                                <MdNotifications size={22} color="#404145" />
+                            </button>
+
+                            <button style={iconButton} onClick={() => navigate('/chat')} title="Messages">
+                                <MdMessage size={22} color="#404145" />
+                            </button>
+
+                            <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => navigate('/favorites')} className="desktop-only">
+                                <MdFavoriteBorder size={22} color="#404145" title="Favorites" />
+                                {favoritesCount > 0 && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '-8px',
+                                        right: '-8px',
+                                        background: '#e53e3e',
+                                        color: '#fff',
+                                        borderRadius: '50%',
+                                        width: '18px',
+                                        height: '18px',
+                                        fontSize: '0.7rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontWeight: '600'
+                                    }}>
+                                        {favoritesCount}
                                     </div>
-                                ))}
+                                )}
                             </div>
-                        )}
-                    </div>
-                    <MdMailOutline size={22} color="#404145" style={{ cursor: 'pointer' }} title="Messages" className="desktop-only" />
-                    <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => navigate('/favorites')} className="desktop-only">
-                        <MdFavoriteBorder size={22} color="#404145" title="Favorites" />
-                        {favoritesCount > 0 && (
-                            <div style={{
-                                position: 'absolute',
-                                top: '-8px',
-                                right: '-8px',
-                                background: '#e53e3e',
-                                color: '#fff',
-                                borderRadius: '50%',
-                                width: '18px',
-                                height: '18px',
-                                fontSize: '0.75rem',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontWeight: 700,
-                            }}>
-                                {favoritesCount}
-                            </div>
-                        )}
-                    </div>
-                    <span style={{ fontWeight: 500, color: '#404145', cursor: 'pointer' }} onClick={() => navigate('/orders')} className="desktop-only">Orders</span>
-                    <button style={createBtn} onClick={() => navigate('/create-gig')} className="create-btn">Create Gig</button>
-                    <button style={mobileMenuBtn} onClick={toggleMobileMenu} className="mobile-menu-btn">
-                        ☰
-                    </button>
-                    <div
-                        style={avatar}
-                        ref={avatarRef}
-                        onClick={() => setDropdownOpen((open) => !open)}
-                    >
+
+                            <button style={iconButton} onClick={() => navigate('/orders')} title="Orders">
+                                <MdShoppingCart size={22} color="#404145" />
+                            </button>
+
+                            {user.role === 'freelancer' && (
+                                <button style={createGigBtn} onClick={() => navigate('/create-gig')} className="desktop-only">
+                                    <MdAdd size={20} />
+                                    Create Gig
+                                </button>
+                            )}
+                        </>
+                    )}
+
+                    {/* User Avatar */}
+                    <div style={avatar} ref={avatarRef} onClick={() => setDropdownOpen(!dropdownOpen)}>
                         {user && user.username ? user.username[0].toUpperCase() : 'A'}
                         <div style={onlineDot}></div>
+
                         {dropdownOpen && (
                             <div style={dropdownMenu} ref={dropdownRef}>
                                 <div style={{ padding: '0.8rem 1.2rem', borderBottom: '1px solid #eee', color: '#666', fontSize: '0.9rem' }}>
@@ -411,98 +404,151 @@ const Navbar = () => {
                                     </div>
                                 </div>
                                 <button
-                                    style={hovered === 'profile' ? dropdownItemHover : dropdownItem}
-                                    onMouseEnter={() => setHovered('profile')}
-                                    onMouseLeave={() => setHovered(null)}
+                                    style={dropdownButton}
+                                    onMouseOver={(e) => e.target.style.background = '#f5f5f5'}
+                                    onMouseOut={(e) => e.target.style.background = 'transparent'}
                                     onClick={() => { setDropdownOpen(false); navigate('/profile'); }}
-                                >Profile</button>
+                                >
+                                    Profile
+                                </button>
                                 {user?.role === 'freelancer' && (
                                     <button
-                                        style={hovered === 'freelancer-dashboard' ? dropdownItemHover : dropdownItem}
-                                        onMouseEnter={() => setHovered('freelancer-dashboard')}
-                                        onMouseLeave={() => setHovered(null)}
+                                        style={dropdownButton}
+                                        onMouseOver={(e) => e.target.style.background = '#f5f5f5'}
+                                        onMouseOut={(e) => e.target.style.background = 'transparent'}
                                         onClick={() => { setDropdownOpen(false); navigate('/freelancer-dashboard'); }}
-                                    >Freelancer Dashboard</button>
+                                    >
+                                        Freelancer Dashboard
+                                    </button>
                                 )}
                                 {user?.role === 'client' && (
                                     <button
-                                        style={hovered === 'client-dashboard' ? dropdownItemHover : dropdownItem}
-                                        onMouseEnter={() => setHovered('client-dashboard')}
-                                        onMouseLeave={() => setHovered(null)}
+                                        style={dropdownButton}
+                                        onMouseOver={(e) => e.target.style.background = '#f5f5f5'}
+                                        onMouseOut={(e) => e.target.style.background = 'transparent'}
                                         onClick={() => { setDropdownOpen(false); navigate('/client-dashboard'); }}
-                                    >Client Dashboard</button>
+                                    >
+                                        Client Dashboard
+                                    </button>
                                 )}
                                 <button
-                                    style={hovered === 'settings' ? dropdownItemHover : dropdownItem}
-                                    onMouseEnter={() => setHovered('settings')}
-                                    onMouseLeave={() => setHovered(null)}
+                                    style={dropdownButton}
+                                    onMouseOver={(e) => e.target.style.background = '#f5f5f5'}
+                                    onMouseOut={(e) => e.target.style.background = 'transparent'}
                                     onClick={() => { setDropdownOpen(false); navigate('/settings'); }}
-                                >Account settings</button>
-                                {user && user.email === REACT_APP_ADMIN_EMAIL && (
+                                >
+                                    Account settings
+                                </button>
+                                {user && user.email === process.env.REACT_APP_ADMIN_EMAIL && (
                                     <button
-                                        style={hovered === 'admin' ? dropdownItemHover : dropdownItem}
-                                        onMouseEnter={() => setHovered('admin')}
-                                        onMouseLeave={() => setHovered(null)}
+                                        style={dropdownButton}
+                                        onMouseOver={(e) => e.target.style.background = '#f5f5f5'}
+                                        onMouseOut={(e) => e.target.style.background = 'transparent'}
                                         onClick={() => { setDropdownOpen(false); navigate('/admin'); }}
-                                    >Admin</button>
+                                    >
+                                        Admin
+                                    </button>
                                 )}
                                 <hr style={{ margin: '0.5rem 0', border: 'none', borderTop: '1px solid #eee' }} />
                                 <button
-                                    style={hovered === 'logout' ? dropdownItemHover : dropdownItem}
-                                    onMouseEnter={() => setHovered('logout')}
-                                    onMouseLeave={() => setHovered(null)}
+                                    style={dropdownButton}
+                                    onMouseOver={(e) => e.target.style.background = '#f5f5f5'}
+                                    onMouseOut={(e) => e.target.style.background = 'transparent'}
                                     onClick={handleLogout}
-                                >Logout</button>
+                                >
+                                    Logout
+                                </button>
                             </div>
                         )}
                     </div>
                 </div>
-
-                {mobileMenuOpen && (
-                    <div style={mobileMenu} className="mobile-menu">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 0' }}>
-                            <MdNotificationsNone size={20} color="#404145" />
-                            <span>Notifications</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 0' }}>
-                            <MdMailOutline size={20} color="#404145" />
-                            <span>Messages</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 0' }}>
-                            <MdFavoriteBorder size={20} color="#404145" />
-                            <span onClick={() => { setMobileMenuOpen(false); navigate('/favorites'); }}>Favorites</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 0' }}>
-                            <span onClick={() => { setMobileMenuOpen(false); navigate('/orders'); }}>Orders</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 0' }}>
-                            <span onClick={() => { setMobileMenuOpen(false); navigate('/profile'); }}>Profile</span>
-                        </div>
-                        {user?.role === 'freelancer' && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 0' }}>
-                                <span onClick={() => { setMobileMenuOpen(false); navigate('/freelancer-dashboard'); }}>Freelancer Dashboard</span>
-                            </div>
-                        )}
-                        {user?.role === 'client' && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 0' }}>
-                                <span onClick={() => { setMobileMenuOpen(false); navigate('/client-dashboard'); }}>Client Dashboard</span>
-                            </div>
-                        )}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 0' }}>
-                            <span onClick={() => { setMobileMenuOpen(false); navigate('/settings'); }}>Settings</span>
-                        </div>
-                        {user && user.email === REACT_APP_ADMIN_EMAIL && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 0' }}>
-                                <span onClick={() => { setMobileMenuOpen(false); navigate('/admin'); }}>Admin</span>
-                            </div>
-                        )}
-                        <hr style={{ margin: '0.5rem 0', border: 'none', borderTop: '1px solid #eee' }} />
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 0' }}>
-                            <span onClick={handleLogout}>Logout</span>
-                        </div>
-                    </div>
-                )}
             </nav>
+
+            {/* Mobile Sidebar */}
+            <div style={mobileMenuOpen ? sidebarOverlayOpen : sidebarOverlay} onClick={closeMobileMenu}></div>
+            <div style={mobileMenuOpen ? sidebarOpen : sidebar}>
+                <div style={sidebarHeader}>
+                    <div style={{ fontWeight: '700', fontSize: '1.3rem', color: '#404145' }}>Menu</div>
+                    <button
+                        style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}
+                        onClick={closeMobileMenu}
+                    >
+                        <MdClose size={24} />
+                    </button>
+                </div>
+
+                <div style={sidebarContent}>
+                    {user ? (
+                        <>
+                            <div style={sidebarItem} onClick={() => handleSidebarItemClick('/')}>
+                                <MdSearch size={20} />
+                                Search Gigs
+                            </div>
+
+                            <div style={sidebarItem} onClick={() => handleSidebarItemClick('/favorites')}>
+                                <MdFavoriteBorder size={20} />
+                                Favorites ({favoritesCount})
+                            </div>
+
+                            <div style={sidebarItem} onClick={() => handleSidebarItemClick('/orders')}>
+                                <MdShoppingCart size={20} />
+                                Orders
+                            </div>
+
+                            <div style={sidebarItem} onClick={() => handleSidebarItemClick('/chat')}>
+                                <MdMessage size={20} />
+                                Messages
+                            </div>
+
+                            {user.role === 'freelancer' && (
+                                <div style={sidebarItem} onClick={() => handleSidebarItemClick('/create-gig')}>
+                                    <MdAdd size={20} />
+                                    Create Gig
+                                </div>
+                            )}
+
+                            {user.role === 'freelancer' && (
+                                <div style={sidebarItem} onClick={() => handleSidebarItemClick('/freelancer-dashboard')}>
+                                    Freelancer Dashboard
+                                </div>
+                            )}
+
+                            {user.role === 'client' && (
+                                <div style={sidebarItem} onClick={() => handleSidebarItemClick('/client-dashboard')}>
+                                    Client Dashboard
+                                </div>
+                            )}
+
+                            <div style={sidebarItem} onClick={() => handleSidebarItemClick('/profile')}>
+                                Profile
+                            </div>
+
+                            <div style={sidebarItem} onClick={() => handleSidebarItemClick('/settings')}>
+                                Settings
+                            </div>
+
+                            {user.email === process.env.REACT_APP_ADMIN_EMAIL && (
+                                <div style={sidebarItem} onClick={() => handleSidebarItemClick('/admin')}>
+                                    Admin Panel
+                                </div>
+                            )}
+
+                            <div style={sidebarItem} onClick={handleLogout}>
+                                Logout
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <div style={sidebarItem} onClick={() => handleSidebarItemClick('/login')}>
+                                Login
+                            </div>
+                            <div style={sidebarItem} onClick={() => handleSidebarItemClick('/register')}>
+                                Register
+                            </div>
+                        </>
+                    )}
+                </div>
+            </div>
         </>
     );
 };

@@ -87,27 +87,33 @@ const AdminPanel = () => {
 
     const fetchData = async () => {
         setLoading(true);
+        setError('');
         try {
             const headers = { Authorization: `Bearer ${token}` };
 
             if (activeTab === 'orders') {
-                const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/orders`, { headers });
+                const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admin/orders`, { headers });
+                if (!res.ok) throw new Error('Failed to fetch orders');
                 const data = await res.json();
                 setOrders(Array.isArray(data) ? data : []);
             } else if (activeTab === 'users') {
                 const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admin/users`, { headers });
+                if (!res.ok) throw new Error('Failed to fetch users');
                 const data = await res.json();
                 setUsers(Array.isArray(data) ? data : []);
             } else if (activeTab === 'gigs') {
-                const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/services`, { headers });
+                const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admin/gigs`, { headers });
+                if (!res.ok) throw new Error('Failed to fetch gigs');
                 const data = await res.json();
                 setGigs(Array.isArray(data) ? data : []);
             } else if (activeTab === 'reviews') {
-                const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/reviews`, { headers });
+                const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admin/reviews`, { headers });
+                if (!res.ok) throw new Error('Failed to fetch reviews');
                 const data = await res.json();
                 setReviews(Array.isArray(data) ? data : []);
             }
         } catch (err) {
+            console.error('Admin fetch error:', err);
             setError('Failed to fetch data');
         } finally {
             setLoading(false);
@@ -116,13 +122,17 @@ const AdminPanel = () => {
 
     const markCompleted = async (id) => {
         setMsg('');
-        const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/orders/${id}/complete`, {
+        const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admin/orders/${id}/complete`, {
             method: 'PATCH',
             headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
-        if (res.ok) setMsg('Order marked as completed!');
-        else setMsg(data.message || 'Failed to update order.');
+        if (res.ok) {
+            setMsg('Order marked as completed!');
+            fetchData(); // Refresh the data
+        } else {
+            setMsg(data.message || 'Failed to update order.');
+        }
     };
 
     const deleteUser = async (userId) => {
@@ -141,7 +151,7 @@ const AdminPanel = () => {
 
     const deleteGig = async (gigId) => {
         if (!window.confirm('Are you sure you want to delete this gig?')) return;
-        const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/services/${gigId}`, {
+        const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admin/gigs/${gigId}`, {
             method: 'DELETE',
             headers: { Authorization: `Bearer ${token}` },
         });
@@ -155,7 +165,7 @@ const AdminPanel = () => {
 
     const deleteReview = async (reviewId) => {
         if (!window.confirm('Are you sure you want to delete this review?')) return;
-        const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/reviews/${reviewId}`, {
+        const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/admin/reviews/${reviewId}`, {
             method: 'DELETE',
             headers: { Authorization: `Bearer ${token}` },
         });

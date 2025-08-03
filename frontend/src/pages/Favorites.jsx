@@ -217,8 +217,86 @@ const Favorites = () => {
         );
     }
 
+    const responsiveStyles = `
+    @media (max-width: 1200px) {
+      .gig-grid {
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .gig-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0 1rem;
+      }
+      
+      .gig-card {
+        max-width: 100%;
+        min-width: auto;
+        height: auto;
+        min-height: 400px;
+      }
+      
+      .container {
+        padding: 1rem;
+      }
+      
+      .header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+      
+      .header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .header p {
+        font-size: 1rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .gig-grid {
+        padding: 0 0.5rem;
+        gap: 0.8rem;
+      }
+      
+      .gig-card {
+        min-height: 380px;
+      }
+      
+      .container {
+        padding: 0.5rem;
+      }
+      
+      .header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .header p {
+        font-size: 0.9rem;
+      }
+    }
+    
+    @media (max-width: 360px) {
+      .gig-grid {
+        padding: 0 0.3rem;
+        gap: 0.6rem;
+      }
+      
+      .gig-card {
+        min-height: 360px;
+      }
+    }
+  `;
+
     return (
         <div style={containerStyle}>
+            <style>{responsiveStyles}</style>
             <div style={headerStyle}>
                 <h1 style={{ color: '#1dbf73', fontWeight: 700, marginBottom: '0.5rem' }}>My Favorites</h1>
                 <p style={{ color: '#666' }}>
