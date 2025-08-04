@@ -10,7 +10,7 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/fiverr_clo
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: process.env.CLIENT_URL || 'http://localhost:3000',
+        origin: process.env.CLIENT_URL || 'freelancer-marketplace2.vercel.app',
         methods: ['GET', 'POST'],
         credentials: true,
     },
