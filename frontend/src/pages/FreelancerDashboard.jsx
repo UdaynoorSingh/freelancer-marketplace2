@@ -177,7 +177,7 @@ const FreelancerDashboard = () => {
             const completedOrders = sellerOrders.filter(order => order.status === 'completed').length;
             const totalEarnings = sellerOrders
                 .filter(order => order.status === 'completed')
-                .reduce((sum, order) => sum + (order.gigId?.price || 0), 0);
+                .reduce((sum, order) => sum + (order.serviceId?.price || order.amount || 0), 0);
 
             setStats({
                 totalGigs: gigsData.length || 0,
@@ -236,7 +236,7 @@ const FreelancerDashboard = () => {
                         <div style={statLabel}>Completed Orders</div>
                     </div>
                     <div style={statCard}>
-                        <div style={statNumber}>${stats.totalEarnings}</div>
+                        <div style={statNumber}>₹{stats.totalEarnings}</div>
                         <div style={statLabel}>Total Earnings</div>
                     </div>
                 </div>
@@ -324,9 +324,9 @@ const FreelancerDashboard = () => {
                             {orders.map(order => (
                                 <tr key={order._id}>
                                     <td style={tdStyle}>{order._id.slice(-8)}</td>
-                                    <td style={tdStyle}>{order.gigId?.title || 'N/A'}</td>
+                                    <td style={tdStyle}>{order.serviceId?.title || 'N/A'}</td>
                                     <td style={tdStyle}>{order.buyerId?.username || 'N/A'}</td>
-                                    <td style={tdStyle}>${order.gigId?.price || 0}</td>
+                                    <td style={tdStyle}>₹{order.serviceId?.price || order.amount || 0}</td>
                                     <td style={tdStyle}>
                                         <span style={statusBadge(order.status)}>{order.status}</span>
                                     </td>

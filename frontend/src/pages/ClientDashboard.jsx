@@ -170,7 +170,7 @@ const ClientDashboard = () => {
             const completedOrders = buyerOrders.filter(order => order.status === 'completed').length;
             const totalSpent = buyerOrders
                 .filter(order => order.status === 'completed')
-                .reduce((sum, order) => sum + (order.gigId?.price || 0), 0);
+                .reduce((sum, order) => sum + (order.serviceId?.price || order.amount || 0), 0);
 
             setStats({
                 totalPurchases: buyerOrders.length,
@@ -213,7 +213,7 @@ const ClientDashboard = () => {
                         <div style={statLabel}>Completed Orders</div>
                     </div>
                     <div style={statCard}>
-                        <div style={statNumber}>${stats.totalSpent}</div>
+                        <div style={statNumber}>₹{stats.totalSpent}</div>
                         <div style={statLabel}>Total Spent</div>
                     </div>
                 </div>
@@ -246,11 +246,11 @@ const ClientDashboard = () => {
                                 <tr key={order._id}>
                                     <td style={tdStyle}>{order._id.slice(-8)}</td>
                                     <td style={tdStyle}>
-                                        <div style={{ fontWeight: 600 }}>{order.gigId?.title || 'N/A'}</div>
-                                        <div style={{ color: '#666', fontSize: '0.9rem' }}>{order.gigId?.description}</div>
+                                        <div style={{ fontWeight: 600 }}>{order.serviceId?.title || 'N/A'}</div>
+                                        <div style={{ color: '#666', fontSize: '0.9rem' }}>{order.serviceId?.description}</div>
                                     </td>
                                     <td style={tdStyle}>{order.sellerId?.username || 'N/A'}</td>
-                                    <td style={tdStyle}>${order.gigId?.price || 0}</td>
+                                    <td style={tdStyle}>₹{order.serviceId?.price || order.amount || 0}</td>
                                     <td style={tdStyle}>
                                         <span style={statusBadge(order.status)}>{order.status}</span>
                                     </td>
@@ -265,7 +265,7 @@ const ClientDashboard = () => {
                                         </button>
                                         <button
                                             style={actionBtn}
-                                            onClick={() => navigate(`/gig/${order.gigId?._id}`)}
+                                            onClick={() => navigate(`/gig/${order.serviceId?._id}`)}
                                             title="View gig"
                                         >
                                             <MdStar size={18} color="#f7931e" />

@@ -83,7 +83,7 @@ const Orders = () => {
               return (
                 <tr key={order._id}>
                   <td style={tdStyle}>{isBuyer ? 'Buyer' : 'Seller'}</td>
-                  <td style={tdStyle}>{order.gigId?.title || 'N/A'}</td>
+                  <td style={tdStyle}>{order.serviceId?.title || 'N/A'}</td>
                   <td style={tdStyle}>{other.username} <br /><span style={{ color: '#888', fontSize: '0.97rem' }}>{other.email}</span></td>
                   <td style={tdStyle}>{order.status}</td>
                   <td style={tdStyle}>{new Date(order.createdAt).toLocaleString()}</td>

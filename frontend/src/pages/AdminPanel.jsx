@@ -194,7 +194,7 @@ const AdminPanel = () => {
                 {orders.map(order => (
                     <tr key={order._id}>
                         <td style={tdStyle}>{order._id}</td>
-                        <td style={tdStyle}>{order.gigId?.title || 'N/A'}</td>
+                        <td style={tdStyle}>{order.serviceId?.title || 'N/A'}</td>
                         <td style={tdStyle}>{order.buyerId?.username || 'N/A'}</td>
                         <td style={tdStyle}>{order.sellerId?.username || 'N/A'}</td>
                         <td style={tdStyle}>{order.status}</td>

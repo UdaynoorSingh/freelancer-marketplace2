@@ -12,7 +12,8 @@ exports.createOrder = async (req, res) => {
         const order = new Order({
             buyerId: req.user.id,
             sellerId: gig.seller,
-            gigId,
+            serviceId: gigId,
+            amount: gig.price,
             status: 'pending',
         });
         await order.save();
@@ -29,7 +30,7 @@ exports.getOrders = async (req, res) => {
                 { buyerId: req.user.id },
                 { sellerId: req.user.id }
             ]
-        }).populate('gigId').populate('buyerId', 'username email').populate('sellerId', 'username email');
+        }).populate('serviceId').populate('buyerId', 'username email').populate('sellerId', 'username email');
         res.json(orders);
     } catch (err) {
         res.status(500).json({ message: 'Error fetching orders', error: err.message });
@@ -39,7 +40,7 @@ exports.getOrders = async (req, res) => {
 exports.getOrder = async (req, res) => {
     try {
         const order = await Order.findById(req.params.id)
-            .populate('gigId')
+            .populate('serviceId')
             .populate('buyerId', 'username email')
             .populate('sellerId', 'username email');
         if (!order) return res.status(404).json({ message: 'Order not found' });
