@@ -163,7 +163,9 @@ const FreelancerDashboard = () => {
 
             // Fetch my gigs
             const gigsRes = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/services/my-gigs`, { headers });
+            console.log('Gigs response status:', gigsRes.status);
             const gigsData = await gigsRes.json();
+            console.log('Gigs data:', gigsData);
             setMyGigs(Array.isArray(gigsData) ? gigsData : []);
 
             // Fetch orders where user is seller
@@ -187,6 +189,8 @@ const FreelancerDashboard = () => {
             });
         } catch (err) {
             console.error('Error fetching dashboard data:', err);
+            console.error('User ID:', user?.id);
+            console.error('Token:', token ? 'Present' : 'Missing');
         } finally {
             setLoading(false);
         }

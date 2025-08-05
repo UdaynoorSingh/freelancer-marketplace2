@@ -47,8 +47,10 @@ exports.searchServices = async (req, res) => {
 // ✅ Get user's own gigs (for freelancer dashboard)
 exports.getMyGigs = async (req, res) => {
     try {
+        console.log('getMyGigs called for user:', req.user.id);
         const services = await Service.find({ seller: req.user.id })
             .populate('seller', '_id username email');
+        console.log('Found services:', services.length);
 
         // For each service, fetch reviews and calculate avg rating/count
         const servicesWithRatings = await Promise.all(services.map(async (service) => {

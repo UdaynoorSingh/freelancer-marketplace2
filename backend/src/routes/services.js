@@ -3,6 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const serviceController = require('../controllers/serviceController');
+const auth = require('../middlewares/auth');
 const multer = require('multer');
 const path = require('path');
 
@@ -22,18 +23,18 @@ const upload = multer({ storage });
 router.get('/search', serviceController.searchServices);
 
 // Get user's own gigs (for freelancer dashboard)
-router.get('/my-gigs', serviceController.getMyGigs);
+router.get('/my-gigs', auth, serviceController.getMyGigs);
 
 // Get a single service by ID
 router.get('/:id', serviceController.getService);
 
 // Create a new service (gig) with image upload
-router.post('/', upload.array('images', 5), serviceController.createService);
+router.post('/', auth, upload.array('images', 5), serviceController.createService);
 
 // Update a service (gig) by ID
-router.put('/:id', upload.array('images', 5), serviceController.updateService);
+router.put('/:id', auth, upload.array('images', 5), serviceController.updateService);
 
 // Delete a service (gig) by ID
-router.delete('/:id', serviceController.deleteService);
+router.delete('/:id', auth, serviceController.deleteService);
 
 module.exports = router; 
