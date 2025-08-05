@@ -127,7 +127,7 @@ const PaymentFormComponent = ({ gig, onSuccess, onError }) => {
             <div style={headerStyle}>
                 <h2 style={{ color: textPrimary, margin: 0 }}>Complete Payment</h2>
                 <p style={{ color: textSecondary, margin: '0.5rem 0 1rem 0' }}>
-                    Pay ${gig.price} for "{gig.title}"
+                    Pay ₹{gig.price} for "{gig.title}"
                 </p>
             </div>
 
@@ -151,7 +151,7 @@ const PaymentFormComponent = ({ gig, onSuccess, onError }) => {
                     cursor: (!stripe || loading) ? 'not-allowed' : 'pointer'
                 }}
             >
-                {loading ? 'Processing...' : `Pay $${gig.price}`}
+                {loading ? 'Processing...' : `Pay ₹${gig.price}`}
             </button>
         </form>
     );

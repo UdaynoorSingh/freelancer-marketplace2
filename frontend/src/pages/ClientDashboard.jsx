@@ -300,7 +300,7 @@ const ClientDashboard = () => {
                                             {gig.description}
                                         </div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                            <span style={{ color: '#1dbf73', fontWeight: 600 }}>${gig.price}</span>
+                                            <span style={{ color: '#1dbf73', fontWeight: 600 }}>₹{gig.price}</span>
                                             <span style={{ color: '#666' }}>by {gig.seller?.username}</span>
                                             <span style={{ color: '#666' }}>{gig.category}</span>
                                         </div>

@@ -260,7 +260,7 @@ const AdminPanel = () => {
                         <td style={tdStyle}>{gig._id}</td>
                         <td style={tdStyle}>{gig.title}</td>
                         <td style={tdStyle}>{gig.seller?.username || 'N/A'}</td>
-                        <td style={tdStyle}>${gig.price}</td>
+                        <td style={tdStyle}>₹{gig.price}</td>
                         <td style={tdStyle}>{gig.category}</td>
                         <td style={tdStyle}>{new Date(gig.createdAt).toLocaleString()}</td>
                         <td style={tdStyle}>

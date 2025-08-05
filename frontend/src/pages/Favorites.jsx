@@ -409,7 +409,7 @@ const Favorites = () => {
                                     </div>
                                     <div style={{ margin: '0.5rem 0', color: successColor, fontWeight: 500 }}>
                                         <span style={fromStyle}>from</span>
-                                        <span style={priceStyle}>${gig.price}</span>
+                                        <span style={priceStyle}>₹{gig.price}</span>
                                     </div>
                                 </div>
                                 <div style={btnRow}>

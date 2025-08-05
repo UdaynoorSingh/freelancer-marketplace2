@@ -273,7 +273,7 @@ const FreelancerDashboard = () => {
                                         <div style={{ fontWeight: 600 }}>{gig.title}</div>
                                         <div style={{ color: '#666', fontSize: '0.9rem' }}>{gig.description}</div>
                                     </td>
-                                    <td style={tdStyle}>${gig.price}</td>
+                                    <td style={tdStyle}>₹{gig.price}</td>
                                     <td style={tdStyle}>{gig.category}</td>
                                     <td style={tdStyle}>{new Date(gig.createdAt).toLocaleDateString()}</td>
                                     <td style={tdStyle}>

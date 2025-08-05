@@ -13,8 +13,8 @@ exports.createPaymentIntent = async (req, res) => {
 
         // Create payment intent
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: Math.round(amount * 100), // Convert to cents
-            currency: 'usd',
+            amount: Math.round(amount * 100), // Convert to paise (smallest unit of INR)
+            currency: 'inr',
             metadata: {
                 gigId,
                 gigTitle,
@@ -72,7 +72,7 @@ exports.confirmPayment = async (req, res) => {
             buyerId: req.user.id,
             sellerId: gig.seller._id,
             serviceId: gigId,
-            amount: paymentIntent.amount / 100, // Convert from cents
+            amount: paymentIntent.amount / 100, // Convert from paise to rupees
             status: 'pending',
             paymentIntentId: paymentIntentId,
             paymentStatus: 'completed'
@@ -108,7 +108,7 @@ exports.getPaymentStatus = async (req, res) => {
 
         res.json({
             status: paymentIntent.status,
-            amount: paymentIntent.amount / 100,
+            amount: paymentIntent.amount / 100, // Convert from paise to rupees
             currency: paymentIntent.currency
         });
 

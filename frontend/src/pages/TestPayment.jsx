@@ -10,7 +10,7 @@ const TestPayment = () => {
     const testGig = {
         _id: 'test-gig-id',
         title: 'Test Service',
-        price: 50,
+        price: 500, // ₹500 for testing
         seller: {
             _id: 'test-seller-id',
             username: 'TestSeller'

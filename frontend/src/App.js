@@ -435,7 +435,7 @@ const Home = () => {
                                     </div>
                                     <div style={priceStyle}>
                                         <span style={fromStyle}>from</span>
-                                        <span style={priceStyle}>${gig.price}</span>
+                                        <span style={priceStyle}>₹{gig.price}</span>
                                     </div>
                                 </div>
                                 <div style={btnRow}>
