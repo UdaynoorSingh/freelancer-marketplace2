@@ -1,40 +1,41 @@
-// src/routes/services.js
-
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const serviceController = require('../controllers/serviceController');
-const auth = require('../middlewares/auth');
-const multer = require('multer');
-const path = require('path');
+const serviceController = require("../controllers/serviceController");
+const auth = require("../middlewares/auth");
+const multer = require("multer");
+const path = require("path");
 
-// Multer setup for local image storage
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '../../uploads'));
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + '-' + file.originalname);
-    }
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "../../uploads"));
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + "-" + file.originalname);
+  },
 });
 const upload = multer({ storage });
 
-// Search services
-router.get('/search', serviceController.searchServices);
+router.get("/search", serviceController.searchServices);
 
-// Get user's own gigs (for freelancer dashboard)
-router.get('/my-gigs', auth, serviceController.getMyGigs);
+router.get("/my-gigs", auth, serviceController.getMyGigs);
 
-// Get a single service by ID
-router.get('/:id', serviceController.getService);
+router.get("/:id", serviceController.getService);
 
-// Create a new service (gig) with image upload
-router.post('/', auth, upload.array('images', 5), serviceController.createService);
+router.post(
+  "/",
+  auth,
+  upload.array("images", 5),
+  serviceController.createService
+);
 
-// Update a service (gig) by ID
-router.put('/:id', auth, upload.array('images', 5), serviceController.updateService);
+router.put(
+  "/:id",
+  auth,
+  upload.array("images", 5),
+  serviceController.updateService
+);
 
-// Delete a service (gig) by ID
-router.delete('/:id', auth, serviceController.deleteService);
+router.delete("/:id", auth, serviceController.deleteService);
 
-module.exports = router; 
+module.exports = router;
