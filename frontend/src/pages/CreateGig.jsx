@@ -98,12 +98,16 @@ const CreateGig = () => {
     formData.append("seller", user?.id);
     form.images.forEach((img) => formData.append("images", img));
     try {
+      const token = user?.token || localStorage.getItem("token");
       const res = await fetch(
         `${process.env.REACT_APP_SERVER_URL}/api/services`,
         {
-          method: "POST",
-          body: formData,
-        }
+            method: "POST",
+             headers: {
+               Authorization: `Bearer ${token}`
+               },
+    body: formData,
+  }
       );
       const data = await res.json();
       if (res.ok) {
